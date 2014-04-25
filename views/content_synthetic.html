@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= title %></title>
+  <% include common/required.html %>
+
+  <script type="text/javascript" src="<%= dynamic('/javascripts/content_synthetic.js')%>"></script>
+  <script type="text/javascript">
+    var i18n = {
+      "js.public.info.synthetic.type.animation"    : "<%=i('js.public.info.synthetic.type.animation') %>"
+      , "js.public.info.synthetic.type.imageset"  : "<%=i('js.public.info.synthetic.type.imageset') %>"
+      , "js.public.info.synthetic.type.gallery"  : "<%=i('js.public.info.synthetic.type.gallery') %>"
+      , "js.public.info.synthetic.type.caseview"  : "<%=i('js.public.info.synthetic.type.caseview') %>"
+      , "html.label.synthetic.type.solutionmap"  : "<%=i('html.label.synthetic.type.solutionmap') %>"
+      , "html.label.synthetic.type.Introduction"  : "<%=i('html.label.synthetic.type.Introduction') %>"
+      , "js.common.search.error"  : "<%=i('js.common.search.error') %>"
+      , "js.common.list.empty"  : "<%=i('js.common.list.empty') %>"
+      , "js.common.dialog.ok"  : "<%=i('js.common.dialog.ok') %>"
+      , "js.common.dialog.cancel"  : "<%=i('js.common.dialog.cancel') %>"
+      , "js.common.delete.confirm"  : "<%=i('js.common.delete.confirm') %>"
+      , "js.common.delete.error"  : "<%=i('js.common.delete.error') %>"
+      , "js.common.delete.success"  : "<%=i('js.common.delete.success') %>"
+      , "js.common.copy.error"  : "<%=i('js.common.copy.error') %>"
+      , "js.common.copy.success"  : "<%=i('js.common.copy.success') %>"
+
+    }
+  </script>
+  <link href="<%= dynamic('/stylesheets/yukari.css')%>" rel="stylesheet" media="screen">
+
+</head>
+<body>
+
+<% include common/navbar.html %>
+<div class="main-container container-fluid">
+  <% include common/sidebar.html %>
+
+  <div class="main-content">
+    <div class="breadcrumbs" id="breadcrumbs">
+      <ul class="breadcrumb">
+        <li>
+          <i class="icon-home icon-large"></i>
+          <a href="/yukari"><%= i('html.label.common.home') %><!-- ホーム--></a>
+            <span class="divider">
+              <i class="icon-chevron-right arrow-icon"></i>
+            </span>
+        </li>
+        <li class="active"><%= i('html.label.synthetic') %><!-- ネタ一覧--></li>
+      </ul><!--.breadcrumb-->
+    </div>
+
+    <div class="page-content">
+      <div class="row tableheader">
+
+        <div class="pull-right">
+          <a data-toggle="modal" href="#settingModal" class="btn btn-default">
+            <i class="icon-plus icon-white"></i>
+            <span><%= i('html.button.synthetic.add') %><!-- ネタ追加--></span>
+          </a>
+        </div>
+
+        <div class="pull-right" style="width: 300px">
+          <form class="search-form" onsubmit="return false">
+            <div class="input-group">
+              <input id="txt_search" type="text" placeholder="<%= i('html.label.common.search') %>(<%= i('html.label.synthetic.title') %>)" class="form-control"  autocomplete="off" />
+                <span id="doSearch" class="input-group-addon">
+                  <i class="icon-search"></i>
+                </span>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div id="list" class="row">
+
+        <!--list table-->
+        <div class="col-lg-12">
+          <table class="table table-hover">
+            <thead>
+            <tr>
+              <th>#</th>
+              <th><%= i('html.label.synthetic.sheet') %><!-- 表紙--></th>
+              <th><%= i('html.label.synthetic.title') %><!-- タイトル--></th>
+              <th><%= i('html.label.synthetic.type') %><!-- タイプ--></th>
+              <th><%= i('html.label.synthetic.pages') %><!-- ページ--></th>
+              <th><%= i('html.label.common.updateby') %><!-- 更新者--></th>
+              <th><%= i('html.label.common.updateat') %><!-- 更新日--></th>
+              <th><%= i('html.label.common.operation') %><!-- 操作--></th>
+            </tr>
+            </thead>
+            <tbody id="synthetic_list"></tbody>
+          </table>
+        </div><!--/span-->
+      </div>
+
+      <div class="pagination-area" id="pagination_area"></div>
+
+    </div>
+
+  </div><!--/.main-container-->
+
+</div>
+<!--popup preview-->
+<div class="modal fade" id="syntheticModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="width: 570px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title"><%= i('html.label.synthetic.slide') %><!-- スライド一覧--></h4>
+      </div>
+      <div class="modal-body" id="slide">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-warning" data-dismiss="modal"><%= i('html.button.common.close') %><!-- Close--></button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<script type="text/template" id="tmpl_synthetic_list">
+  <tr>
+    <td>{{index}}</td>
+    <td>
+      <a href="#">
+        <img src="{{cover}}" rowid="{{id}}" class="nav-user-photo" operation="preview">
+      </a>
+    </td>
+    <td>{{name}}</td>
+    <td>{{type}}</td>
+    <td>{{page}}</td>
+    <td>{{editby}}</td>
+    <td>{{editat}}</td>
+    <td>
+      <a href="#" class="btn btn-default btn-sm" rowid="{{id}}" operation="edit"><%= i('html.button.common.edit') %><!-- 編集--></a>
+      <a href="#" class="btn btn-default btn-sm" rowid="{{id}}" operation="copy"><%= i('html.button.common.copy') %><!-- コピー--></a>
+      <a href="#" class="btn btn-default btn-sm" rowid="{{id}}" operation="delete"><%= i('html.button.common.delete') %><!-- 削除--></a>
+    </td>
+  </tr>
+</script>
+
+<script type="text/template" id="tmpl_slide">
+  <div class="carousel slide bs-docs-carousel-example" id="carousel-example-generic">
+    <ol class="carousel-indicators">
+      <$ for(var cnt=1;cnt<=count;cnt++) { $>
+      <li id="slide{{cnt}}" data-slide-to="{{cnt}}" data-target="#carousel-example-generic"></li>
+      <$ } $>
+    </ol>
+    <div class="carousel-inner">
+      <$ var cnt=1; _.each(files, function(file) { $>
+      <div class="item" id="page{{cnt}}">
+        <img alt="Slide{{cnt}}" src="/picture/{{file}}">
+      </div>
+      <$ cnt++}); $>
+    </div>
+    <a data-slide="prev" href="#carousel-example-generic" class="left carousel-control">
+      <span class="icon-prev"></span>
+    </a>
+    <a data-slide="next" href="#carousel-example-generic" class="right carousel-control">
+      <span class="icon-next"></span>
+    </a>
+  </div>
+</script>
+
+<!--setting  Modal -->
+<div class="modal fade" id="settingModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title"><%= i('html.label.synthetic.new') %><!-- 新規ネタ--></h4>
+      </div>
+      <div class="modal-body">
+        <form class="form-horizontal" role="form">
+
+
+          <div class="form-group">
+            <label class="col-lg-3 control-label"><%= i('html.label.synthetic.type') %><!-- タイプ--></label>
+            <div class="col-lg-8">
+              <input type="hidden"  name="thumb_type" value="image">
+
+              <div class="panel-group" id="accordion">
+                <div class="panel panel-default">
+                  <div class="panel-heading" style="height: 35px;">
+                    <div style="width: 45px;float: left;"><input type="radio" name="type" value="normal" checked style="margin-top: 0px;"></div>
+                    <div style="width: 200px;float: left;">
+                    <h4 class="panel-title">
+                      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" num="0">
+                        <%= i('html.label.synthetic.type.setimage') %><!-- 画像セット-->
+                      </a>
+                    </h4>
+                    </div>
+                  </div>
+                  <div id="collapseOne" class="panel-collapse collapse in">
+                    <div class="panel-body">
+                      <img width="300px" src="/public/images/image.png">
+                    </div>
+                  </div>
+                </div>
+                <div class="panel panel-default">
+                  <div class="panel-heading" style="height: 35px;">
+                    <div style="width: 45px;float: left;"><input type="radio" name="type" value="imageWithThumb" style="margin-top: 0px;"></div>
+                    <div style="width: 200px;float: left;">
+                    <h4 class="panel-title">
+                      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" num="1">
+                        <%= i('html.label.synthetic.type.actionimage') %><!-- アニメーション画像-->
+                      </a>
+                    </h4>
+                    </div>
+                  </div>
+                  <div id="collapseTwo" class="panel-collapse collapse">
+                    <div class="panel-body">
+                      <img width="300px" src="/public/images/anime.png">
+                    </div>
+                  </div>
+                </div>
+                <div class="panel panel-default">
+                  <div class="panel-heading" style="height: 35px;">
+                    <div style="width: 45px;float: left;"><input type="radio" name="type" value="CaseView" style="margin-top: 0px;"></div>
+                    <div style="width: 200px;float: left;">
+                    <h4 class="panel-title">
+                      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" num="2">
+                        <%= i('html.label.synthetic.type.casemenu') %><!-- ケースビュー-->
+                      </a>
+                    </h4>
+                    </div>
+                  </div>
+                  <div id="collapseThree" class="panel-collapse collapse">
+                    <div class="panel-body">
+                      <img width="300px" src="/public/images/caseview.png">
+                    </div>
+                  </div>
+                </div>
+                <div class="panel panel-default">
+                  <div class="panel-heading" style="height: 35px;">
+                    <div style="width: 45px;float: left;"><input type="radio" name="type" value="gallery" style="margin-top: 0px;"></div>
+                    <div style="width: 200px;float: left;">
+                    <h4 class="panel-title">
+                      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseFour" num="3">
+                        <%= i('html.label.synthetic.type.gallery') %><!-- ギャラリー-->
+                      </a>
+                    </h4>
+                    </div>
+                  </div>
+                  <div id="collapseFour" class="panel-collapse collapse">
+                    <div class="panel-body">
+                      <img width="300px" src="/public/images/gallery.png">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="panel panel-default">
+                  <div class="panel-heading" style="height: 35px;">
+                    <div style="width: 45px;float: left;"><input type="radio" name="type" value="solutionmap" style="margin-top: 0px;"></div>
+                    <div style="width: 200px;float: left;">
+                      <h4 class="panel-title">
+                        <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseFive" num="4">
+                          <%= i('html.label.synthetic.type.solutionmap') %><!-- solutionmap-->
+                        </a>
+                      </h4>
+                    </div>
+                  </div>
+                  <div id="collapseFive" class="panel-collapse collapse">
+                    <div class="panel-body">
+                      <img width="300px" src="/public/images/solutiontype.png">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="panel panel-default">
+                  <div class="panel-heading" style="height: 35px;">
+                    <div style="width: 45px;float: left;"><input type="radio" name="type" value="Introduction" style="margin-top: 0px;"></div>
+                    <div style="width: 200px;float: left;">
+                      <h4 class="panel-title">
+                        <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseSix" num="5">
+                          <%= i('html.label.synthetic.type.Introduction') %><!-- Introduction-->
+                        </a>
+                      </h4>
+                    </div>
+                  </div>
+                  <div id="collapseSix" class="panel-collapse collapse">
+                    <div class="panel-body">
+                      <img width="300px" src="/public/images/Introduction.png">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" name="okSetting" class="btn btn-warning cancel">
+          <i class="icon-hand-right icon-white"></i><span> <%= i('html.button.synthetic.next') %><!-- 次へ--></span></button>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+<!-- /. setting modal -->
+</body>
+</html>
