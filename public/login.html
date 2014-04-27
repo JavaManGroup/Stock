@@ -75,7 +75,7 @@
 					</div>
 					<div class="col-xs-12 col-sm-12 col-md-5 col-lg-4">
 						<div class="well no-padding">
-							<form action="index.html" id="login-form" class="smart-form client-form">
+							<form action="index.html" id="login-form" class="smart-form client-form" onsubmit="login();">
 								<header>
 									Sign In
 								</header>
@@ -180,6 +180,16 @@
 
 		<script type="text/javascript">
 			runAllForms();
+
+      function login(){
+        $.ajax({
+          url:"simplelogin?name=sara&password=sara"
+          ,success:function (){
+            alert("login success");
+          }
+        });
+        return false;
+      };
 
 			$(function() {
 				// Validation

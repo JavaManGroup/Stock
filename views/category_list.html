@@ -4,7 +4,7 @@
             <i class="fa fa-table fa-fw "></i>
                 产品管理
 			<span>> 
-				产品列表
+				分类管理
 			</span>
         </h1>
     </div>
@@ -12,10 +12,9 @@
 
 <!-- widget grid -->
 <section id="widget-grid" class="">
-
     <!-- row -->
+    <input type="hidden" id="_csrf" name="_csrf" value="<%= csrftoken %>" />
     <div class="row">
-
         <!-- NEW WIDGET START -->
         <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 
@@ -28,17 +27,15 @@
                  data-widget-deletebutton="false"
                  data-widget-fullscreenbutton="false"
                  data-widget-custombutton="false"
+                 data-widget-collapsed="false"
                  data-widget-sortable="false">
                 <!-- widget options:
                 usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false">
-
-
-
                 -->
                 <header>
                     <span class="widget-icon"> <i class="fa fa-table"></i> </span>
 
-                    <h2>产品列表</h2>
+                    <h2>列表</h2>
                 </header>
 
                 <!-- widget div-->
@@ -53,128 +50,72 @@
 
                     <!-- widget content -->
                     <div class="widget-body no-padding">
+
+
                         <table class="table table-bordered table-striped table-hover">
                             <thead>
                             <tr>
+                                <th>序号</th>
                                 <th>编号</th>
                                 <th>名称</th>
-                                <th>类别</th>
-                                <th>库房</th>
-                                <th>数量</th>
-                                <th>单位</th>
-                                <th>价格</th>
-                                <th>盘点类型</th>
                                 <th>创建者</th>
                                 <th>创建时间</th>
                                 <th>更新时间</th>
                                 <th>操作</th>
                             </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="category_list">
                             <tr>
-                                <td>s-1001-001</td>
-                                <td>老白干</td>
+                                <td>1</td>
                                 <td>酒水</td>
-                                <td>水吧</td>
-                                <td>3</td>
-                                <td>瓶</td>
-                                <td>10元</td>
-                                <td>日盘</td>
                                 <td>浩</td>
-                                <td>2013-01-01</td>
-                                <td>2013-01-01</td>
+                                <td>2014-03-11</td>
+                                <td>2014-03-11</td>
                                 <td><a class="btn btn-primary btn-sm" href="javascript:void(0);">修改</a>
                                     <a class="btn btn-danger btn-sm" href="javascript:void(0);">删除</a></td>
                             </tr>
                             <tr>
-                                <td>s-1001-002</td>
-                                <td>二锅头</td>
-                                <td>酒水</td>
-                                <td>水吧</td>
-                                <td>3</td>
-                                <td>瓶</td>
-                                <td>10元</td>
-                                <td>日盘</td>
-                                <td>浩</td>
-                                <td>2013-01-01</td>
-                                <td>2013-01-01</td>
-                                <td><a class="btn btn-primary btn-sm" href="javascript:void(0);">修改</a>
-                                    <a class="btn btn-danger btn-sm" href="javascript:void(0);">删除</a></td>
-                            </tr>
-                            <tr>
-                                <td>s-1001-003</td>
-                                <td>泸州老窖</td>
-                                <td>酒水</td>
-                                <td>水吧</td>
-                                <td>3</td>
-                                <td>瓶</td>
-                                <td>10元</td>
-                                <td>日盘</td>
-                                <td>浩</td>
-                                <td>2013-01-01</td>
-                                <td>2013-01-01</td>
-                                <td><a class="btn btn-primary btn-sm" href="javascript:void(0);">修改</a>
-                                    <a class="btn btn-danger btn-sm" href="javascript:void(0);">删除</a></td>
-                            </tr>
-                            <tr>
-                                <td>s-1002-001</td>
-                                <td>鸭肉</td>
+                                <td>2</td>
                                 <td>半成品</td>
-                                <td>后厨</td>
-                                <td>3</td>
-                                <td>只</td>
-                                <td>10元</td>
-                                <td>日盘</td>
                                 <td>浩</td>
-                                <td>2013-01-01</td>
-                                <td>2013-01-01</td>
+                                <td>2014-03-11</td>
+                                <td>2014-03-11</td>
                                 <td><a class="btn btn-primary btn-sm" href="javascript:void(0);">修改</a>
                                     <a class="btn btn-danger btn-sm" href="javascript:void(0);">删除</a></td>
                             </tr>
                             <tr>
-                                <td>s-1003-001</td>
-                                <td>豆油</td>
-                                <td>配料</td>
-                                <td>后厨</td>
-                                <td>3</td>
-                                <td>桶</td>
-                                <td>10元</td>
-                                <td>日盘</td>
+                                <td>2</td>
+                                <td>半成品</td>
                                 <td>浩</td>
-                                <td>2013-01-01</td>
-                                <td>2013-01-01</td>
+                                <td>2014-03-11</td>
+                                <td>2014-03-11</td>
                                 <td><a class="btn btn-primary btn-sm" href="javascript:void(0);">修改</a>
                                     <a class="btn btn-danger btn-sm" href="javascript:void(0);">删除</a></td>
                             </tr>
-
                             <tr>
-                                <td>s-1004-002</td>
-                                <td>筷子</td>
-                                <td>餐具</td>
-                                <td>库房</td>
-                                <td>3</td>
-                                <td>只</td>
-                                <td>2元</td>
-                                <td>月盘</td>
+                                <td>2</td>
+                                <td>半成品</td>
                                 <td>浩</td>
-                                <td>2013-01-01</td>
-                                <td>2013-01-01</td>
+                                <td>2014-03-11</td>
+                                <td>2014-03-11</td>
                                 <td><a class="btn btn-primary btn-sm" href="javascript:void(0);">修改</a>
                                     <a class="btn btn-danger btn-sm" href="javascript:void(0);">删除</a></td>
                             </tr>
-
                             <tr>
-                                <td>s-1004-002</td>
-                                <td>筷子</td>
-                                <td>餐具</td>
-                                <td>库房</td>
-                                <td>3</td>
-                                <td>只</td>
-                                <td>2元</td>
-                                <td>月盘</td>
+                                <td>2</td>
+                                <td>半成品</td>
                                 <td>浩</td>
-                                <td>2013-01-01</td>
-                                <td>2013-01-01</td>
+                                <td>2014-03-11</td>
+                                <td>2014-03-11</td>
+                                <td><a class="btn btn-primary btn-sm" href="javascript:void(0);">修改</a>
+                                    <a class="btn btn-danger btn-sm" href="javascript:void(0);">删除</a></td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>半成品</td>
+                                <td>浩</td>
+                                <td>2014-03-11</td>
+                                <td>2014-03-11</td>
                                 <td><a class="btn btn-primary btn-sm" href="javascript:void(0);">修改</a>
                                     <a class="btn btn-danger btn-sm" href="javascript:void(0);">删除</a></td>
                             </tr>
@@ -194,11 +135,16 @@
         <!-- WIDGET END -->
 
     </div>
-
     <!-- end row -->
 
     <!-- row -->
-
+    <div class="row">
+        <div class="col-lg-12">
+            <button type="submit" class="btn btn-primary pull-right" style="margin: 10px 0 0 5px;" data-toggle="modal" data-target="#categoryAddModal">
+                追加
+            </button>
+        </div>
+    </div>
 
     <!-- end row -->
 
@@ -206,16 +152,63 @@
 <!-- end widget grid -->
 
 
+<!-- Modal -->
+<div class="modal fade" id="categoryAddModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+          &times;
+        </button>
+        <h4 class="modal-title" id="myModalLabel">追加分类</h4>
+      </div>
+      <div class="modal-body">
+
+        <div class="row">
+          <div class="col-md-12">
+            <div class="form-group">
+              <input type="text" class="form-control" placeholder="类型名称" required id="categoryName"/>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">
+          取消
+        </button>
+        <button type="button" class="btn btn-primary" id="categoryAddBtn">
+          添加
+        </button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<script type="text/template" id="tmpl_category_list">
+  <tr>
+  <tr>
+    <td>{{index}}</td>
+    <td>{{categoryId}}</td>
+    <td>{{categoryName}}</td>
+    <td>{{userName}}</td>
+    <td>{{createat}}</td>
+    <td>{{editat}}</td>
+    <td><a class="btn btn-primary btn-sm" href="javascript:void(0);">修改</a>
+      <a class="btn btn-danger btn-sm" href="javascript:void(0);">删除</a></td>
+</script>
+
+<script type="text/javascript" src="/javascripts/category_list.js"></script>
+
 <script type="text/javascript">
     // DO NOT REMOVE : GLOBAL FUNCTIONS!
     pageSetUp();
     // PAGE RELATED SCRIPTS
-
+    var start = 0;
+    var count = 20;
+    var keyword = "";
     function initialize() {
-
-      smart.doget("/api/product/list.json?start=0&count=20",function(err,result ) {
-        console.log(result);
-      });
+      render(start,count,keyword);
+      event();
     }
 </script>
-

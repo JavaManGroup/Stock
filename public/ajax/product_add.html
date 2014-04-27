@@ -47,8 +47,8 @@
 					<!-- widget content -->
 					<div class="widget-body no-padding">
 
-						<form action="" class="smart-form">
-
+						<form action="" class="smart-form" onsubmit="return false;">
+              <input id="crsftoken" value="" type="hidden">
 							<fieldset>
 
 								<section>
@@ -56,32 +56,32 @@
                                         <div class="col col-4">
                                             <label class="label">产品名称：</label>
                                             <label class="input">
-                                                <input type="text" class="input-xs">
+                                                <input type="text" class="input-xs" id="productName">
                                             </label>
                                             <label class="label">产品编号：</label>
                                             <label class="input">
-                                                <input type="text" class="input-xs">
+                                                <input type="text" class="input-xs" id="productSN">
                                             </label>
                                         </div>
                                         <div class="col col-4">
                                             <label class="label">产品分类：</label>
                                             <label class="input">
-                                                <input type="text" class="input-xs">
+                                                <input type="text" class="input-xs" id="productCategoryId">
                                             </label>
                                             <label class="label">产品单位：</label>
                                             <label class="input">
-                                                <input type="text" class="input-xs">
+                                                <input type="text" class="input-xs" id="productUnitId">
                                             </label>
 
                                         </div>
                                         <div class="col col-4">
                                             <label class="label">产品条码：</label>
                                             <label class="input">
-                                                <input type="text" class="input-xs">
+                                                <input type="text" class="input-xs" id="productCode">
                                             </label>
                                             <label class="label">产品单价：</label>
                                             <label class="input">
-                                                <input type="text" class="input-xs">
+                                                <input type="text" class="input-xs" id="productPrice">
                                             </label>
                                         </div>
                                     </div>
@@ -97,7 +97,7 @@
 								<section>
 									<label class="label">产品描述：</label>
 									<label class="textarea">
-										<textarea rows="3" class="custom-scroll"></textarea>
+										<textarea rows="3" class="custom-scroll" id="productDescription"></textarea>
 									</label>
 									<div class="note">
 										<strong>提示:</strong>关于产品的简介
@@ -139,7 +139,7 @@
                                     提交&录入下一个
                                 </button>
 
-								<button type="submit" class="btn btn-primary">
+								<button type="submit" class="btn btn-primary" id="btnProductAdd">
 									提交&返回
 								</button>
 
@@ -171,5 +171,35 @@
 // DO NOT REMOVE : GLOBAL FUNCTIONS!
 	pageSetUp();
 
+  function initialize() {
+    console.log("product_add");
+    event();
+  }
+  function event() {
+
+    var productName = $("#productName").val();
+    var productSN = $("#productSN").val();
+    var productCategoryId = $("#productCategoryId").val();
+    var productUnitId = $("#productUnitId").val();
+    var productCode = $("#productCode").val();
+    var productPrice = $("#productPrice").val();
+    var productDescription = $("#productDescription").val();
+
+    var opt = {
+      productName : productName ,
+      productSN : productSN ,
+      productCategoryId : productCategoryId,
+      productUnitId : productUnitId,
+      productCode : productCode,
+      productPrice : productPrice,
+      productDescription : productDescription
+    };
+
+    $("#btnProductAdd").click(function(){
+      smart.dopost("")
+
+      alert("tianjia");
+    });
+  }
 // PAGE RELATED SCRIPTS
 </script>
