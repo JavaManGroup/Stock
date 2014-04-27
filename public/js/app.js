@@ -1172,6 +1172,9 @@ function checkURL() {
 		//console.log("page title: " + document.title);
 
 		// parse url to jquery
+    console.log(url)
+    console.log(container)
+
 		loadURL(url, container);
 	} else {
 
@@ -1189,6 +1192,7 @@ function checkURL() {
 
 function loadURL(url, container) {
 	//console.log(container)
+  delete initialize;
 
 	$.ajax({
 		type : "GET",
@@ -1222,14 +1226,16 @@ function loadURL(url, container) {
 		},*/
 		success : function(data) {
 			// cog replaced here...
-			// alert("success")
-			
+
 			container.css({
 				opacity : '0.0'
 			}).html(data).delay(50).animate({
 				opacity : '1.0'
 			}, 300);
-			
+
+      if (initialize) {
+        initialize();
+      }
 
 		},
 		error : function(xhr, ajaxOptions, thrownError) {
