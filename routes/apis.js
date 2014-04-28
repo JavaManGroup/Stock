@@ -8,6 +8,19 @@ var product = require("../apis/product")
 exports.guiding = function(app){
 
   // APIs
+
+
+  app.post('/api/category/update.json', function(req, res) {
+    category.categoryUpdate(req, res);
+  });
+
+  app.post('/api/category/delete.json', function(req, res) {
+    category.deleteCategory(req, res);
+  });
+
+  app.get('/api/category/get.json', function(req, res) {
+    category.getCategory(req, res);
+  });
   app.get('/api/category/list.json', function(req, res) {
     category.categoryList(req, res);
   });
