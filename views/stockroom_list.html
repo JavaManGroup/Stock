@@ -18,6 +18,8 @@
     <!-- row -->
     <div class="row">
 
+        <input type="hidden" id="_csrf" name="_csrf" value="<%= csrftoken %>" />
+
         <!-- NEW WIDGET START -->
         <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <!-- Widget ID (each widget will need unique ID)-->
@@ -63,7 +65,7 @@
                                 <th>操作</th>
                             </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="room_list">
                             <tr>
                                 <td>LB01</td>
                                 <td>水吧</td>
@@ -111,9 +113,14 @@
     <!-- end row -->
 
     <div class="row">
-        <div class="col-xs-12 col-sm-7 col-md-7 col-lg-12">
+
+      <div class="col-lg-10" id="pagination_area">
+
+      </div>
+
+      <div class="col-lg-2">
         <span>
-            <button class="btn btn-primary btn-sm pull-right" data-toggle="modal" data-target="#myModal">
+            <button class="btn btn-primary btn-sm pull-right" data-toggle="modal" data-target="#roomAddModal" onclick="addView()">
                 追加
             </button>
         </span>
@@ -125,7 +132,7 @@
 
 
 <!-- Modal -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal fade" id="roomAddModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -139,11 +146,11 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
-                            <input type="text" class="form-control" placeholder="编号" required />
+                            <input type="text" class="form-control" placeholder="编号" required id="roomNum"/>
                         </div>
 
                         <div class="form-group">
-                            <input type="text" class="form-control" placeholder="名称" required />
+                            <input type="text" class="form-control" placeholder="名称" required id="roomName"/>
                         </div>
                     </div>
                 </div>
@@ -152,7 +159,7 @@
                 <button type="button" class="btn btn-default" data-dismiss="modal">
                     取消
                 </button>
-                <button type="button" class="btn btn-primary">
+                <button id="addBtn" type="button" class="btn btn-primary" onclick="add();">
                     添加
                 </button>
             </div>
@@ -161,11 +168,40 @@
 </div><!-- /.modal -->
 
 
+
+<script type="text/template" id="tmpl_room_list">
+  <tr>
+    <td>{{index}}</td>
+    <td>{{roomNum}}</td>
+    <td>{{roomName}}</td>
+    <td>{{userName}}</td>
+    <td>{{createat}}</td>
+    <td>{{editat}}</td>
+    <td><a class="btn btn-primary btn-sm" href="javascript:void(0);" onclick="updateBtn('{{roomId}}')">修改</a>
+        <a class="btn btn-danger btn-sm" href="javascript:void(0);" onclick="deleteBtn('{{roomId}}')">删除</a></td>
+  </tr>
+
+</script>
+
+
+<script type="text/javascript" src="/javascripts/stockroom_list.js"></script>
+
+
 <script type="text/javascript">
     // DO NOT REMOVE : GLOBAL FUNCTIONS!
     pageSetUp();
     // PAGE RELATED SCRIPTS
+
+    var start = 0;
+    var count = 10;
+    var keyword = "";
+
+
     function initialize() {
 
+      smart.paginationInitalized = false;
+      $("#pagination_area").html("");
+      render(start,count,keyword);
+      event();
     }
 </script>

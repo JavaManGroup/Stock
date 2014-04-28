@@ -136,7 +136,7 @@
 
 
 <script type="text/template" id="tmpl_category_list">
-  <tr>
+
   <tr>
     <td>{{index}}</td>
     <td>{{categoryName}}</td>
@@ -146,6 +146,7 @@
     <td><a class="btn btn-primary btn-sm categoryUpdateBtn" href="javascript:void(0);" onclick="categoryUpdateBtn('{{categoryId}}')">修改</a>
 
       <a class="btn btn-danger btn-sm" href="javascript:void(0);" onclick="categoryDeleteBtn('{{categoryId}}')">删除</a></td>
+  </tr>
 
 </script>
 
@@ -155,9 +156,11 @@
     // DO NOT REMOVE : GLOBAL FUNCTIONS!
     pageSetUp();
     // PAGE RELATED SCRIPTS
+
     var start = 0;
     var count = 10;
     var keyword = "";
+
     function initialize() {
 
       smart.paginationInitalized = false;
