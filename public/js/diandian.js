@@ -9,6 +9,70 @@ var smart = {
       escape: /\{\{([^-]+?)\}\}/gim
     };
   }(),
+
+  /**
+   * 翻页
+   */
+  paginationInitalized: false,
+  paginationScrollTop : true,
+  pagination: function(container, totalItems, rowCount, callback) {
+
+    // 初始化一次
+    if (this.paginationInitalized) {
+      return;
+    }
+    this.paginationInitalized = true;
+
+    var startPage = 1, pageCount = 5
+      , limit = Math.ceil(totalItems / rowCount) > pageCount ? pageCount : Math.ceil(totalItems / rowCount)
+      , tmpl = $("#tmpl_pagination").html();
+
+    container.unbind("click").on("click", "a", function(event){
+
+      var activePage = $(event.target).attr("activePage");
+
+      if (activePage == "prev") {
+        if(startPage == 1){
+          return false;
+        }else{
+          startPage = activePage = startPage - pageCount < 1 ? 1 : startPage - pageCount;
+        }
+      } else if (activePage == "next") {
+        if(Math.ceil((totalItems - (startPage - 1) * rowCount) / rowCount) > pageCount ){
+          startPage = activePage = startPage + pageCount;
+        }
+        else{
+          return false;
+        }
+      }
+      callback((activePage - 1) * rowCount);
+
+      var remainder = Math.ceil((totalItems - (startPage - 1) * rowCount) / rowCount)
+        , limit = remainder > pageCount ? pageCount : remainder;
+      container.html("");
+      container.append(_.template(tmpl, {
+        "start": startPage
+        , "limit": limit
+        , "active": activePage
+        , "canPrev": startPage > 1
+        , "canNext": (startPage+limit-1 < Math.ceil(totalItems / rowCount)) && (limit >= pageCount)
+      }));
+      if (smart.paginationScrollTop) {
+        return ;
+      } else {
+
+        return false;
+      }
+
+    });
+
+    // 初始化
+    container.html("");
+    container.append(_.template(tmpl, {
+      "start": 1, "limit": limit, "active": 1, "canPrev": false, "canNext": limit < Math.ceil(totalItems / rowCount) && (limit >= pageCount)
+    }));
+  },
+
   error: function(err,defaultMsg,moveToErrPage){
     if(err){
       if(err.status == 403 || err.status == 400 || err.status == 500){
@@ -29,13 +93,31 @@ var smart = {
       return false;
     }
   },
+  date: function(date, format, withTimezone) {
+    if(typeof(date) != "string" || date == "")
+      return "";
+    format = format || "yyyy/MM/dd hh:mm";
+    withTimezone = (withTimezone == true)? true: false;
 
+    var timezone = $("#timezone").val();
+    var time = Date.parse(date, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    time += new Date().getTimezoneOffset() * 60 * 1000;
+    time += timezone.substring(3,6) * 3600 * 1000;
+
+    if(withTimezone) { // 2013/04/18 08:00(+0800)
+      return new Date(time).Format(format) + "(" + timezone.substring(3,9) + ")";
+    } else { // 2013/04/18 08:00
+      return new Date(time).Format(format);
+    }
+    //return new Date(time).toLocaleString() + $.datepicker.formatDate('yy/mm/dd h:mm', new Date(time))
+  },
   csrf: function() {
     return encodeURIComponent($("#_csrf").val());
   },
   uid: function() {
     return $("#userid").val();
   },
+
   doget: function (url_, callback_) {
     $.ajax({
       type: "GET", url: url_, dataType: "json", success: function (result) {
@@ -70,24 +152,25 @@ var smart = {
     });
   }
 }
-Date.prototype.Format = function (fmt) { //author: meizz 
+
+Date.prototype.Format = function (fmt) { //author: meizz
   var o = {
-      "M+": this.getMonth() + 1, //月份 
-      "d+": this.getDate(), //日 
-      "h+": this.getHours(), //小时 
-      "m+": this.getMinutes(), //分 
-      "s+": this.getSeconds(), //秒 
-      "q+": Math.floor((this.getMonth() + 3) / 3), //季度 
-      "S": this.getMilliseconds() //毫秒 
+    "M+": this.getMonth() + 1, //月份
+    "d+": this.getDate(), //日
+    "h+": this.getHours(), //小时
+    "m+": this.getMinutes(), //分
+    "s+": this.getSeconds(), //秒
+    "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+    "S": this.getMilliseconds() //毫秒
   };
-    
-  if (/(y+)/.test(fmt)) 
+
+  if (/(y+)/.test(fmt))
     fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-  
+
   for (var k in o)
-    if (new RegExp("(" + k + ")").test(fmt)) 
+    if (new RegExp("(" + k + ")").test(fmt))
       fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
-  
+
   return fmt;
 };
 

@@ -45,6 +45,8 @@
 
 	</head>
 	<body class="">
+
+    <input type="hidden" id="timezone" name="timezone" value="GMT+08:00" />
 		<!-- possible classes: minified, fixed-ribbon, fixed-header, fixed-width-->
 
 		<!-- HEADER -->
@@ -215,7 +217,34 @@
 		<div id="shortcut">
 
 		</div>
-		<!-- END SHORTCUT AREA -->
+
+
+    <!-- 翻页 -->
+    <script type="text/template" id="tmpl_pagination">
+      <ul class="pagination">
+        <$ if (canPrev) { $>
+        <li><a href="javascript:void(0);" activePage = "prev">上一页</a></li>
+        <$ } else { $>
+        <li class="disabled" ><a href="javascript:void(0);" activePage = "prev">上一页</a></li>
+        <$ } $>
+
+        <$ for (var i = start; i < start + limit; i++) { $>
+        <$ if (i == active) { $>
+        <li class="active" ><a href="javascript:void(0);" activePage = {{i}}>{{i}}</a></li>
+        <$ } else { $>
+        <li><a href="javascript:void(0);" activePage = {{i}}>{{i}}</a></li>
+        <$ } $>
+        <$ } $>
+
+        <$ if (canNext) { $>
+        <li><a href="javascript:void(0);" activePage = "next">下一页</a></li>
+        <$ } else { $>
+        <li class="disabled"><a href="javascript:void(0);" activePage = "next">下一页</a></li>
+        <$ } $>
+      </ul>
+    </script>
+
+    <!-- END SHORTCUT AREA -->
 
 		<!--================================================== -->
 

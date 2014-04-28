@@ -1,21 +1,63 @@
 
+
+
+
+function categoryDeleteBtn(dataId){
+
+  var data = {
+    categoryId : dataId
+  }
+
+  smart.dopost("/api/category/delete.json",data ,function(err,result){
+
+    render(0, count);
+  });
+}
+function categoryUpdateBtn(dataId) {
+
+  $('#categoryAddModal').modal('show');
+  smart.doget("/api/category/get.json?categoryId=" + dataId ,function(err,result){
+    console.log(result._id);
+    $("#categoryId").val(result._id);
+    $("#categoryName").val(result.name);
+  });
+}
+
 function event(){
   $("#categoryAddBtn").click(function(){
 
     var categoryName = $("#categoryName").val();
-
+    var categoryId = $("#categoryId").val();
     var data = {
       categoryName : categoryName
     };
 
+    if(categoryId) {
+      data.categoryId = categoryId;
+      smart.dopost("/api/category/update.json",data ,function(err,result){
+
+        render(0, count);
+        $("#categoryId").val('');
+        $('#categoryAddModal').modal('hide')
+      });
+      return;
+    }
+
+    $("#categoryName").val("");
     smart.dopost("/api/category/add.json",data ,function(err,result){
 
       var url = "ajax/category";
       var container = $('#content');
 
-      render(0, 20);
+      smart.paginationInitalized = false;
+      $("#pagination_area").html("");
+      render(0, count);
       $('#categoryAddModal').modal('hide')
     });
+  });
+
+  $(".categoryUpdateBtn a").click(function(e){
+
   });
 }
 
@@ -49,9 +91,9 @@ function render(start, count,keyword) {
         index : index ++ ,
         categoryId : row._id,
         categoryName :row.name ,
-        createat : row.createat ,
+        createat : smart.date(row.createat) ,
         userName :"浩",
-        editat : row.editat ,
+        editat : smart.date(row.editat),
         createby : row.createby
       }));
     });
@@ -60,6 +102,11 @@ function render(start, count,keyword) {
       container.html("没有记录");
     }
 
+    // 设定翻页
+    smart.pagination($("#pagination_area"), result.totalItems, 10, function(active) {
+
+      render(active,count);
+    });
     // 设定翻页
 //    smart.pagination($("#pagination_area"), result.totalItems, count, function(active, rowCount){
 //      render.apply(window, [active, count]);

@@ -56,7 +56,6 @@
                             <thead>
                             <tr>
                                 <th>序号</th>
-                                <th>编号</th>
                                 <th>名称</th>
                                 <th>创建者</th>
                                 <th>创建时间</th>
@@ -64,62 +63,7 @@
                                 <th>操作</th>
                             </tr>
                             </thead>
-                            <tbody id="category_list">
-                            <tr>
-                                <td>1</td>
-                                <td>酒水</td>
-                                <td>浩</td>
-                                <td>2014-03-11</td>
-                                <td>2014-03-11</td>
-                                <td><a class="btn btn-primary btn-sm" href="javascript:void(0);">修改</a>
-                                    <a class="btn btn-danger btn-sm" href="javascript:void(0);">删除</a></td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>半成品</td>
-                                <td>浩</td>
-                                <td>2014-03-11</td>
-                                <td>2014-03-11</td>
-                                <td><a class="btn btn-primary btn-sm" href="javascript:void(0);">修改</a>
-                                    <a class="btn btn-danger btn-sm" href="javascript:void(0);">删除</a></td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>半成品</td>
-                                <td>浩</td>
-                                <td>2014-03-11</td>
-                                <td>2014-03-11</td>
-                                <td><a class="btn btn-primary btn-sm" href="javascript:void(0);">修改</a>
-                                    <a class="btn btn-danger btn-sm" href="javascript:void(0);">删除</a></td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>半成品</td>
-                                <td>浩</td>
-                                <td>2014-03-11</td>
-                                <td>2014-03-11</td>
-                                <td><a class="btn btn-primary btn-sm" href="javascript:void(0);">修改</a>
-                                    <a class="btn btn-danger btn-sm" href="javascript:void(0);">删除</a></td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>半成品</td>
-                                <td>浩</td>
-                                <td>2014-03-11</td>
-                                <td>2014-03-11</td>
-                                <td><a class="btn btn-primary btn-sm" href="javascript:void(0);">修改</a>
-                                    <a class="btn btn-danger btn-sm" href="javascript:void(0);">删除</a></td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>半成品</td>
-                                <td>浩</td>
-                                <td>2014-03-11</td>
-                                <td>2014-03-11</td>
-                                <td><a class="btn btn-primary btn-sm" href="javascript:void(0);">修改</a>
-                                    <a class="btn btn-danger btn-sm" href="javascript:void(0);">删除</a></td>
-                            </tr>
-                            </tbody>
+                            <tbody id="category_list"></tbody>
                         </table>
 
                     </div>
@@ -138,13 +82,17 @@
     <!-- end row -->
 
     <!-- row -->
-    <div class="row">
-        <div class="col-lg-12">
-            <button type="submit" class="btn btn-primary pull-right" style="margin: 10px 0 0 5px;" data-toggle="modal" data-target="#categoryAddModal">
-                追加
-            </button>
-        </div>
+
+    <div class="col-lg-10" id="pagination_area">
+
     </div>
+    <div class="col-lg-2">
+      <button type="submit" class="btn btn-primary pull-right" style="margin: 10px 0 0 5px;" data-toggle="modal"
+              data-target="#categoryAddModal">
+        追加
+      </button>
+    </div>
+  </div>
 
     <!-- end row -->
 
@@ -167,7 +115,9 @@
         <div class="row">
           <div class="col-md-12">
             <div class="form-group">
-              <input type="text" class="form-control" placeholder="类型名称" required id="categoryName"/>
+
+              <input type="hidden" id="categoryId"/>
+              <input type="text"   class="form-control" placeholder="类型名称" required id="categoryName"/>
             </div>
           </div>
         </div>
@@ -189,13 +139,14 @@
   <tr>
   <tr>
     <td>{{index}}</td>
-    <td>{{categoryId}}</td>
     <td>{{categoryName}}</td>
     <td>{{userName}}</td>
     <td>{{createat}}</td>
     <td>{{editat}}</td>
-    <td><a class="btn btn-primary btn-sm" href="javascript:void(0);">修改</a>
-      <a class="btn btn-danger btn-sm" href="javascript:void(0);">删除</a></td>
+    <td><a class="btn btn-primary btn-sm categoryUpdateBtn" href="javascript:void(0);" onclick="categoryUpdateBtn('{{categoryId}}')">修改</a>
+
+      <a class="btn btn-danger btn-sm" href="javascript:void(0);" onclick="categoryDeleteBtn('{{categoryId}}')">删除</a></td>
+
 </script>
 
 <script type="text/javascript" src="/javascripts/category_list.js"></script>
@@ -205,9 +156,12 @@
     pageSetUp();
     // PAGE RELATED SCRIPTS
     var start = 0;
-    var count = 20;
+    var count = 10;
     var keyword = "";
     function initialize() {
+
+      smart.paginationInitalized = false;
+      $("#pagination_area").html("");
       render(start,count,keyword);
       event();
     }
