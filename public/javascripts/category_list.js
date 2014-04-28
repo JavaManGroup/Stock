@@ -107,10 +107,6 @@ function render(start, count,keyword) {
 
       render(active,count);
     });
-    // 设定翻页
-//    smart.pagination($("#pagination_area"), result.totalItems, count, function(active, rowCount){
-//      render.apply(window, [active, count]);
-//    });
   });
 
 }
