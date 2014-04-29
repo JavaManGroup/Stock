@@ -4,21 +4,21 @@ var _ = smart.util.underscore
   , async = smart.util.async
   , error = smart.framework.errors
   , util = smart.framework.util
-  , room = require('../modules/mod_room.js');
+  , supplier = require('../modules/mod_supplier.js');
 
 
 exports.update = function (handler, callback) {
   var uid = handler.uid
     , code = handler.code
-    , roomId = handler.params.roomId;
+    , supplierId = handler.params.supplierId;
   var params = handler.params;
   var data = {
-    roomNum   : params.roomNum   ,
-    roomName  : params.roomName  ,
+    supplierNum   : params.supplierNum   ,
+    supplierName  : params.supplierName  ,
     editat : new Date()
   };
 
-  room.update(code,roomId,data,function(err,result){
+  supplier.update(code,supplierId,data,function(err,result){
     return callback(err,result);
   });
 
@@ -27,9 +27,9 @@ exports.update = function (handler, callback) {
 exports.remove = function (handler, callback) {
   var uid = handler.uid
     , code = handler.code
-    , roomId = handler.params.roomId;
+    , supplierId = handler.params.supplierId;
 
-  room.remove(code,uid, roomId, function(err, result) {
+  supplier.remove(code,uid, supplierId, function(err, result) {
     if (err) {
       return callback(new error.InternalServer(err));
     }
@@ -40,9 +40,9 @@ exports.remove = function (handler, callback) {
 exports.get = function (handler, callback) {
   var uid = handler.uid
     , code = handler.code
-    , roomId = handler.params.roomId;
+    , supplierId = handler.params.supplierId;
 
-  room.get(code, roomId, function(err, result) {
+  supplier.get(code, supplierId, function(err, result) {
     if (err) {
       return callback(new error.InternalServer(err));
     }
@@ -57,13 +57,14 @@ exports.add = function (handler, callback) {
   var params = handler.params;
 
   var data = {
-    roomNum   : params.roomNum   ,
-    roomName  : params.roomName  ,
+    supplierNum   : params.supplierNum   ,
+    supplierName  : params.supplierName  ,
+    supplierPhone : params.supplierPhone ,
     createat : new Date() ,
     editat : new Date()
   };
 
-  room.add(code,data,function(err, result){
+  supplier.add(code,data,function(err, result){
     return callback(err, result);
   });
 }
@@ -76,9 +77,9 @@ exports.list = function (handler, callback) {
   var start = params.start;
   var count = params.count;
 
-  room.getList(code, condition, start, count, function (err, result) {
+  supplier.getList(code, condition, start, count, function (err, result) {
 
-    room.total(code,condition,function(err1,totalItems) {
+    supplier.total(code,condition,function(err1,totalItems) {
       return callback(err, {items:result,totalItems:totalItems});
     });
   });

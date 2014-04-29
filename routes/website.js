@@ -27,6 +27,10 @@ exports.guiding = function (app) {
     user.simpleLogin(req, res);
   });
 
+  app.get("/ajax/stock", function (req, res) {
+    var handler = new context().bind(req, res);
+    res.render("stock_list", {"title": __(handler, "盘点目录")});
+  });
 
   app.get("/ajax/supplier", function (req, res) {
     var handler = new context().bind(req, res);

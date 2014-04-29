@@ -2,7 +2,9 @@
 var product = require("../apis/product")
   , category = require("../apis/category")
   , unit = require("../apis/unit")
-  , room = require("../apis/room");
+  , room = require("../apis/room")
+  , supplier = require("../apis/supplier")
+  , stock = require("../apis/stock");
 
 
 "use strict";
@@ -10,6 +12,37 @@ var product = require("../apis/product")
 exports.guiding = function(app){
 
   // APIs
+  // stock
+
+  app.get('/api/stock/list.json', function(req, res) {
+    stock.list(req,res);
+  });
+
+  app.post("/api/stock/add.json", function (req, res) {
+    stock.addStock(req,res);
+  });
+
+  // supplier
+  app.post('/api/supplier/update.json', function(req, res) {
+    supplier.supplierUpdate(req, res);
+  });
+
+  app.post('/api/supplier/delete.json', function(req, res) {
+    supplier.deleteSupplier(req, res);
+  });
+
+  app.get('/api/supplier/get.json', function(req, res) {
+    supplier.getSupplier(req, res);
+  });
+  app.get('/api/supplier/list.json', function(req, res) {
+    supplier.supplierList(req, res);
+  });
+
+  app.post('/api/supplier/add.json', function(req, res) {
+    supplier.supplierAdd(req, res);
+  });
+  
+  
   // room
   app.post('/api/room/update.json', function(req, res) {
     room.roomUpdate(req, res);

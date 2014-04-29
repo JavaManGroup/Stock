@@ -56,11 +56,12 @@
             <table class="table table-bordered table-striped table-hover">
               <thead>
               <tr>
+                <th>序号</th>
                 <th>编号</th>
                 <th>名称</th>
                 <th>类别</th>
                 <th>库房</th>
-                <th>数量</th>
+                <th>供应商</th>
                 <th>单位</th>
                 <th>价格</th>
                 <th>盘点类型</th>
@@ -70,115 +71,7 @@
                 <th>操作</th>
               </tr>
               </thead>
-              <tbody id="product_list">
-              <tr>
-                <td>s-1001-001</td>
-                <td>老白干</td>
-                <td>酒水</td>
-                <td>水吧</td>
-                <td>3</td>
-                <td>瓶</td>
-                <td>10元</td>
-                <td>日盘</td>
-                <td>浩</td>
-                <td>2013-01-01</td>
-                <td>2013-01-01</td>
-                <td><a class="btn btn-primary btn-sm" href="javascript:void(0);">修改</a>
-                  <a class="btn btn-danger btn-sm" href="javascript:void(0);">删除</a></td>
-              </tr>
-              <tr>
-                <td>s-1001-002</td>
-                <td>二锅头</td>
-                <td>酒水</td>
-                <td>水吧</td>
-                <td>3</td>
-                <td>瓶</td>
-                <td>10元</td>
-                <td>日盘</td>
-                <td>浩</td>
-                <td>2013-01-01</td>
-                <td>2013-01-01</td>
-                <td><a class="btn btn-primary btn-sm" href="javascript:void(0);">修改</a>
-                  <a class="btn btn-danger btn-sm" href="javascript:void(0);">删除</a></td>
-              </tr>
-              <tr>
-                <td>s-1001-003</td>
-                <td>泸州老窖</td>
-                <td>酒水</td>
-                <td>水吧</td>
-                <td>3</td>
-                <td>瓶</td>
-                <td>10元</td>
-                <td>日盘</td>
-                <td>浩</td>
-                <td>2013-01-01</td>
-                <td>2013-01-01</td>
-                <td><a class="btn btn-primary btn-sm" href="javascript:void(0);">修改</a>
-                  <a class="btn btn-danger btn-sm" href="javascript:void(0);">删除</a></td>
-              </tr>
-              <tr>
-                <td>s-1002-001</td>
-                <td>鸭肉</td>
-                <td>半成品</td>
-                <td>后厨</td>
-                <td>3</td>
-                <td>只</td>
-                <td>10元</td>
-                <td>日盘</td>
-                <td>浩</td>
-                <td>2013-01-01</td>
-                <td>2013-01-01</td>
-                <td><a class="btn btn-primary btn-sm" href="javascript:void(0);">修改</a>
-                  <a class="btn btn-danger btn-sm" href="javascript:void(0);">删除</a></td>
-              </tr>
-              <tr>
-                <td>s-1003-001</td>
-                <td>豆油</td>
-                <td>配料</td>
-                <td>后厨</td>
-                <td>3</td>
-                <td>桶</td>
-                <td>10元</td>
-                <td>日盘</td>
-                <td>浩</td>
-                <td>2013-01-01</td>
-                <td>2013-01-01</td>
-                <td><a class="btn btn-primary btn-sm" href="javascript:void(0);">修改</a>
-                  <a class="btn btn-danger btn-sm" href="javascript:void(0);">删除</a></td>
-              </tr>
-
-              <tr>
-                <td>s-1004-002</td>
-                <td>筷子</td>
-                <td>餐具</td>
-                <td>库房</td>
-                <td>3</td>
-                <td>只</td>
-                <td>2元</td>
-                <td>月盘</td>
-                <td>浩</td>
-                <td>2013-01-01</td>
-                <td>2013-01-01</td>
-                <td><a class="btn btn-primary btn-sm" href="javascript:void(0);">修改</a>
-                  <a class="btn btn-danger btn-sm" href="javascript:void(0);">删除</a></td>
-              </tr>
-
-              <tr>
-                <td>s-1004-002</td>
-                <td>筷子</td>
-                <td>餐具</td>
-                <td>库房</td>
-                <td>3</td>
-                <td>只</td>
-                <td>2元</td>
-                <td>月盘</td>
-                <td>浩</td>
-                <td>2013-01-01</td>
-                <td>2013-01-01</td>
-                <td><a class="btn btn-primary btn-sm" href="javascript:void(0);">修改</a>
-                  <a class="btn btn-danger btn-sm" href="javascript:void(0);">删除</a></td>
-              </tr>
-              </tbody>
+              <tbody id="product_list"></tbody>
             </table>
 
           </div>
@@ -196,7 +89,20 @@
   </div>
 
   <!-- end row -->
+  <div class="row">
 
+    <div class="col-lg-10" id="pagination_area">
+
+    </div>
+
+    <div class="col-lg-2">
+        <span>
+            <button class="btn btn-primary btn-sm pull-right" data-toggle="modal" data-target="#roomAddModal" onclick="addView()">
+              追加
+            </button>
+        </span>
+    </div>
+  </div>
   <!-- row -->
 
 
@@ -207,22 +113,24 @@
 <!-- end widget grid -->
 <script type="text/template" id="tmpl_product_list">
   <tr>
+    <td>{{index}}</td>
     <td>{{productSN}}</td>
     <td>{{productName}}</td>
-    <td>餐具</td>
-    <td>库房</td>
-    <td>3</td>
-    <td>只</td>
+    <td>{{category}}</td>
+    <td>{{room}}</td>
+    <td>{{supplier}}</td>
+    <td>{{unit}}</td>
     <td>2元</td>
     <td>月盘</td>
     <td>{{createby}}</td>
     <td>{{createat}}</td>
     <td>{{editat}}</td>
     <td><a class="btn btn-primary btn-sm" href="javascript:void(0);">修改</a>
-      <a class="btn btn-danger btn-sm" href="javascript:void(0);">删除</a></td>
+        <a class="btn btn-danger btn-sm" href="javascript:void(0);">删除</a></td>
   </tr>
 
 </script>
+
 
 <script type="text/javascript" src="/javascripts/product_list.js"></script>
 
@@ -232,10 +140,14 @@
   // PAGE RELATED SCRIPTS
 
   var start = 0;
-  var count = 20;
+  var count = 10;
+
   function initialize() {
-    render(start,count);
-    smart.doget("/api/product/list.json?start=0&count=20",function(err,result ) {
+
+    smart.paginationInitalized = false;
+    $("#pagination_area").html("");
+    render(start, count);
+    smart.doget("/api/product/list.json?start=0&count=20", function (err, result) {
       console.log(result);
     });
   }
