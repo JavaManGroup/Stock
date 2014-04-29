@@ -14,12 +14,16 @@ var mongo       = smart.util.mongoose
  * 菜品的schema
  * @type {schema}
  */
-var Stock = new schema({
-    productId       :   { type: String, description: "编号" , index :true }
-  , amount          :   { type: Number, description: "编号" }
-  , num             :   { type: Number, description: "编号" }
-  , type            :   { type: String, description: "盘点类型  1 日盘 2  月盘  3 季盘  4" }
+var Stocktake = new schema({
+    amount          :   { type: Number, description: "编号" }
+  , type            :   { type: Number, description: "盘点类型  1 日盘 2  月盘  3 季盘  4" }
+  , today           :   { type: String, description: "今天日期" }
+  , num             :   { type: String, description: "编号" }
+  , tips            :   { type: String, description: "" }
+  , status          :   { type: Number, description: "盘点类型  1 提交未审核 2 提交已审核  3 取下修改" }
+
   , valid           :   { type: Number, description: "产品名称" , default:1 }
+
   , createat        :   { type: Date,   description: "创建时间" }
   , createby        :   { type: String, description: "创建者" }
   , editat          :   { type: Date,   description: "最终修改时间" }
@@ -32,13 +36,13 @@ var Stock = new schema({
  * @returns {model} item model
  */
 function model(dbname) {
-  return conn.model(dbname, "Stock", Stock);
+  return conn.model(dbname, "Stocktake", Stocktake);
 }
 
 
-exports.hasProduct = function(code, productId, type , callback){
-  var stock = model(code);
-  stock.findOne({productId:productId ,type : type , valid : 1},function(err, result) {
+exports.has = function(code, today, type , callback){
+  var stocktake = model(code);
+  stocktake.findOne({today:today ,type : type , valid : 1},function(err, result) {
     callback(err, result);
   });
 }
@@ -48,11 +52,11 @@ exports.hasProduct = function(code, productId, type , callback){
  * @param {object} newItem    新的菜品
  * @param {function} callback 返回素材添加结果
  */
-exports.add = function(code, newStock, callback) {
+exports.add = function(code, newStocktake, callback) {
 
-  var stock = model(code);
+  var stocktake = model(code);
 
-  new stock(newStock).save(function(err, result) {
+  new stocktake(newStocktake).save(function(err, result) {
     callback(err, result);
   });
 };
@@ -64,11 +68,11 @@ exports.add = function(code, newStock, callback) {
  * @param {object} conditions 更新条件
  * @param {function} callback 返回菜品更新结果
  */
-exports.update = function(code, stockId, newStock, callback) {
+exports.update = function(code, stocktakeId, newStocktake, callback) {
 
-  var stock = model(code);
+  var stocktake = model(code);
 
-  stock.findByIdAndUpdate(stockId, newStock, function(err, result) {
+  stocktake.findByIdAndUpdate(stocktakeId, newStocktake, function(err, result) {
     callback(err, result);
   });
 };
@@ -79,11 +83,11 @@ exports.update = function(code, stockId, newStock, callback) {
  * @param {string} itemId 菜品ID
  * @param {function} callback 返回指定菜品
  */
-exports.get = function(code, stockId, callback) {
+exports.get = function(code, stocktakeId, callback) {
 
-  var stock = model(code);
+  var stocktake = model(code);
 
-  stock.findOne({_id: stockId}, function(err, result) {
+  stocktake.findOne({_id: stocktakeId}, function(err, result) {
     callback(err, result);
   });
 };
@@ -95,11 +99,11 @@ exports.get = function(code, stockId, callback) {
  * @param {string} itemId 菜品ID
  * @param {function} callback 返回删除结果
  */
-exports.remove = function(code, uid, stockId, callback) {
+exports.remove = function(code, uid, stocktakeId, callback) {
 
-  var stock = model(code);
+  var stocktake = model(code);
 
-  stock.findByIdAndUpdate(stockId,  {valid: 0, editat: new Date(), editby: uid}, function(err, result) {
+  stocktake.findByIdAndUpdate(stocktakeId,  {valid: 0, editat: new Date(), editby: uid}, function(err, result) {
     callback(err, result);
   });
 };
@@ -114,9 +118,9 @@ exports.remove = function(code, uid, stockId, callback) {
  */
 exports.getList = function(code, condition, start, limit, callback) {
 
-  var stock = model(code);
+  var stocktake = model(code);
 
-  stock.find(condition)
+  stocktake.find(condition)
     .skip(start || 0)
     .limit(limit || 20)
     .sort({editat: -1})
@@ -133,9 +137,9 @@ exports.getList = function(code, condition, start, limit, callback) {
  */
 exports.total = function(code, condition, callback) {
 
-  var stock = model(code);
+  var stocktake = model(code);
 
-  stock.count(condition).exec(function(err, count) {
+  stocktake.count(condition).exec(function(err, count) {
     callback(err, count);
   });
 };

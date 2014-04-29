@@ -27,6 +27,27 @@ exports.guiding = function (app) {
     user.simpleLogin(req, res);
   });
 
+
+  app.get("/ajax/take/detail", function (req, res) {
+    var handler = new context().bind(req, res);
+    var type = req.query.type;
+    var takeId = req.query.takeId;
+    res.render("take_detail", {"title": __(handler, "盘点记录详细") , "type":type , takeId: takeId});
+  });
+
+  app.get("/ajax/take/history", function (req, res) {
+    var handler = new context().bind(req, res);
+    var type = req.query.type;
+    res.render("take_history", {"title": __(handler, "盘点记录") , "type":type});
+  });
+
+  app.get("/ajax/taking", function (req, res) {
+    var handler = new context().bind(req, res);
+    var type = req.query.type;
+    res.render("take_list", {"title": __(handler, "盘点") , "type":type});
+  });
+
+
   app.get("/ajax/stock", function (req, res) {
     var handler = new context().bind(req, res);
     res.render("stock_list", {"title": __(handler, "盘点目录")});

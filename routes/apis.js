@@ -14,6 +14,24 @@ exports.guiding = function(app){
   // APIs
   // stock
 
+
+
+  app.get('/api/take/detail.json', function(req, res) {
+    stock.getTakeDetailList(req,res);
+  });
+
+  app.get('/api/take/history.json', function(req, res) {
+    stock.getTakeHistoryList(req,res);
+  });
+
+  app.post('/api/stock/addTake.json', function(req, res) {
+    stock.addTake(req,res);
+  });
+
+  app.get('/api/stock/getTakeList.json', function(req, res) {
+    stock.getTakeList(req,res);
+  });
+
   app.get('/api/stock/list.json', function(req, res) {
     stock.list(req,res);
   });

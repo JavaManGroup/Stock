@@ -7,6 +7,42 @@ var response  = smart.framework.response
   , stock   = require('../controllers/ctrl_stock');
 
 
+
+exports.getTakeDetailList = function (req, res) {
+
+  var handler = new context().bind(req, res);
+  stock.getTakeDetailList(handler, function (err, result) {
+    response.send(res, err, result);
+  });
+};
+
+
+exports.getTakeHistoryList = function (req, res) {
+
+  var handler = new context().bind(req, res);
+  stock.getTakeHistoryList(handler, function (err, result) {
+    response.send(res, err, result);
+  });
+};
+
+exports.addTake = function (req, res) {
+
+  var handler = new context().bind(req, res);
+  stock.addTake(handler, function (err, result) {
+    response.send(res, err, result);
+  });
+};
+
+
+
+exports.getTakeList = function (req, res) {
+
+  var handler = new context().bind(req, res);
+  stock.getTakeList(handler, function (err, result) {
+    response.send(res, err, result);
+  });
+};
+
 exports.list = function(req, res) {
 
   var handler = new context().bind(req, res);

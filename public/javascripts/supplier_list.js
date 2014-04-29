@@ -97,8 +97,6 @@ function render(start, count,keyword) {
     var container = $("#supplier_list");
     container.html("");
 
-    console.log(list);
-
     _.each(list, function(row){
 
       container.append(_.template(tmpl, {

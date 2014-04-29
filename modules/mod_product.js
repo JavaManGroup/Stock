@@ -22,7 +22,7 @@ var Product = new schema({
   , productName          :   { type: String, description: "产品名称"}
   , productCode          :   { type: String, description: "产品条码"}
   , productSN            :   { type: String, description: "产品条码"}
-  , productPrice         :   { type: String, description: "产品条码"}
+  , productPrice         :   { type: Number, description: "产品条码"}
   , productDescription   :   { type: String, description: "产品条码"}
   , productCheckType     :   { type: String, description: "名称"}
   , createat             :   { type: Date,   description: "创建时间" }
