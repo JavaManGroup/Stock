@@ -1,12 +1,13 @@
 <input type="hidden" id="_csrf" name="_csrf" value="<%= csrftoken %>" />
 
+
 <div class="row">
   <div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
     <h1 class="page-title txt-color-blueDark">
       <i class="fa fa-table fa-fw "></i>
-        产品管理
+      产品管理
 			<span>> 
-				盘点目录
+				采购目录
 			</span>
     </h1>
   </div>
@@ -14,24 +15,6 @@
 
 <!-- widget grid -->
 <section id="widget-grid" class="">
-
-
-<div class="row" style="margin-bottom: 10px;">
-
-
-  <article class="col-xs-12 col-sm-12 col-md-12 col-lg-3">
-    <div class="btn-group btn-group-justified" id="btnGroupStockType">
-      <a href="javascript:void(0);" class="btn btn-default" value="1">日盘</a>
-      <a href="javascript:void(0);" class="btn btn-default" value="2">月盘</a>
-      <a href="javascript:void(0);" class="btn btn-default" value="3">季盘</a>
-      <a href="javascript:void(0);" class="btn btn-default" value="4">年盘</a>
-    </div>
-
-  </article>
-  <article class="col-xs-12 col-sm-12 col-md-12 col-lg-9">
-  </article>
-
-</div>
 
 <!-- row -->
 <div class="row">
@@ -57,8 +40,7 @@
       -->
       <header>
         <span class="widget-icon"> <i class="fa fa-table"></i> </span>
-
-        <h2>盘点目录</h2>
+        <h2>采购目录</h2>
       </header>
 
       <!-- widget div-->
@@ -81,18 +63,16 @@
               <th>名称</th>
               <th>类别</th>
               <th>库房</th>
-              <th width=80>当前数量</th>
-              <th width=80>阀值</th>
+              <th>当前数量</th>
               <th>单位</th>
               <th>价格</th>
-              <th>盘点类型</th>
               <th>创建者</th>
               <th>创建时间</th>
               <th>更新时间</th>
               <th>操作</th>
             </tr>
             </thead>
-            <tbody id="stock_body"></tbody>
+            <tbody id="list"></tbody>
           </table>
 
         </div>
@@ -110,21 +90,20 @@
 </div>
 
 <!-- end row -->
-
 <div class="row">
+  <div class="col-lg-12">
 
-  <div class="col-lg-10" id="pagination_area">
+    <button type="button" class="btn btn-default pull-right" onclick="window.history.back();" style="margin: 10px 0 0 5px;">
+      返回
+    </button>
 
-  </div>
+    <button type="submit" class="btn btn-primary pull-right" style="margin: 10px 0 0 5px;" onclick="addView();">
+      追加
+    </button>
 
-  <div class="col-lg-2">
-        <span>
-            <button type="button" class="btn btn-primary btn-sm pull-right" onclick="javascript:addView();">
-              追加
-            </button>
-        </span>
   </div>
 </div>
+
 <!-- row -->
 
 
@@ -133,74 +112,43 @@
 </section>
 <!-- end widget grid -->
 
-<script type="text/javascript" src="/javascripts/stock_list.js"/>
+<script type="text/template" id="tmpl_list">
+  <tr>
+    <td>{{index}}</td>
+    <td>{{productSN}}</td>
+    <td>{{productName}}</td>
+    <td>{{productCategory}}</td>
+    <td>{{productRoom}}</td>
+    <td>{{amount}}</td>
+    <td>{{productUnit}}</td>
+    <td>{{productPrice}}</td>
+    <td>{{userName}}</td>
+    <td>{{createat}}</td>
+    <td>{{editat}}</td>
+    <td><a class="btn btn-danger btn-sm" href="javascript:void(0);" onclick="removePlan('{{id}}')">删除</a></td>
+  </tr>
+</script>
+
+<script type="text/javascript" src="/javascripts/plan_list.js"></script>
+
 <script type="text/javascript">
   // DO NOT REMOVE : GLOBAL FUNCTIONS!
   pageSetUp();
   // PAGE RELATED SCRIPTS
   var start = 0;
   var count = 10;
+  var keyword = "";
+
 
   function initialize() {
 
     smart.paginationInitalized = false;
     $("#pagination_area").html("");
-    render(start, count);
+    render(start,count,keyword);
     event();
   }
 </script>
 
-<script type="text/template" id="tmpl_stock_tr">
-<tr>
-  <td>{{index}}</td>
-  <td>{{sn}}</td>
-  <td>{{name}}</td>
-  <td>{{category}}</td>
-  <td>{{room}}</td>
-  <td>{{originalAmount}}</td>
-  <td><input class="form-control" value="{{lower}}" data="{{id}}" onblur="onBlurStockLower(this,'{{id}}')" onclick="cleanInput(this)"/></td>
-  <td>{{unit}}</td>
-  <td>{{price}}</td>
-  <td>{{stockType}}</td>
-  <td>{{userName}}</td>
-  <td>2013-01-01</td>
-  <td>2013-01-01</td>
-  <td><a class="btn btn-danger btn-sm" href="javascript:void(0);" onclick="removeStock('{{id}}')">删除</a></td>
-</tr>
-</script>
-
-<script type="text/template" id="tmpl_category_tr">
-  <tr onclick="clickCategory('{{id}}');">
-    <th>{{name}}</th>
-    <th>{{amount}}</th>
-  </tr>
-</script>
-
-
-<script type="text/template" id="tmpl_product_tr">
-  <tr>
-    <td>
-      <label class="checkbox">
-        <input type="checkbox" name="checkbox-inline" value="{{id}}" onclick="checkProduct(this)">
-        <i></i>
-      </label>
-    </td>
-    <td>{{sn}}</td>
-    <td>{{name}}</td>
-    <td>{{roomName}}</td>
-  </tr>
-</script>
-
-<script type="text/template" id="tmpl_has_product_tr">
-  <tr>
-    <td>{{index}}</td>
-    <td>{{sn}}</td>
-    <td>{{name}}</td>
-    <td>{{categoryName}}</td>
-    <td>{{roomName}}</td>
-    <td><a class="btn btn-danger btn-xs" href="javascript:void(0);" onclick="removeProduct('{{id}}')">删除</a></td>
-  </tr>
-</script>
 <!-- Modal -->
 <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -281,3 +229,38 @@
   <!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
+
+
+
+<script type="text/template" id="tmpl_category_tr">
+  <tr onclick="clickCategory('{{id}}');">
+    <th>{{name}}</th>
+    <th>{{amount}}</th>
+  </tr>
+</script>
+
+
+<script type="text/template" id="tmpl_product_tr">
+  <tr>
+    <td>
+      <label class="checkbox">
+        <input type="checkbox" name="checkbox-inline" value="{{id}}" onclick="checkProduct(this)">
+        <i></i>
+      </label>
+    </td>
+    <td>{{sn}}</td>
+    <td>{{name}}</td>
+    <td>{{roomName}}</td>
+  </tr>
+</script>
+
+<script type="text/template" id="tmpl_has_product_tr">
+  <tr>
+    <td>{{index}}</td>
+    <td>{{sn}}</td>
+    <td>{{name}}</td>
+    <td>{{categoryName}}</td>
+    <td>{{roomName}}</td>
+    <td><a class="btn btn-danger btn-xs" href="javascript:void(0);" onclick="removeProduct('{{id}}')">删除</a></td>
+  </tr>
+</script>

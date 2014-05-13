@@ -1,11 +1,12 @@
+<input type="hidden" id="_csrf" name="_csrf" value="<%= csrftoken %>" />
 
 <div class="row">
   <div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
     <h1 class="page-title txt-color-blueDark">
       <i class="fa fa-table fa-fw "></i>
-        产品管理
+      产品管理
 			<span>> 
-				盘点记录
+				采购计划
 			</span>
     </h1>
   </div>
@@ -14,33 +15,36 @@
 <!-- widget grid -->
 <section id="widget-grid" class="">
 
-  <div class="row" style="margin-bottom: 10px;display: none;" >
+  <div class="row" style="margin-bottom: 10px;">
 
-    <article class="col-xs-12 col-sm-12 col-md-12 col-lg-3">
-      <div class="btn-group btn-group-justified">
-      </div>
-
-    </article>
-    <article class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
-    </article>
     <article class="col-xs-12 col-sm-12 col-md-12 col-lg-1">
+      <button type="button" class="btn btn-default pull-right" onclick="javascript:addView();" >
+        新规
+      </button>
+
+    </article>
+    <article class="col-xs-12 col-sm-12 col-md-12 col-lg-8">
+    </article>
+
+    <article class="col-xs-12 col-sm-12 col-md-12 col-lg-1" style="display: none;">
       <input placeholder="开始时间" class="form-control" />
     </article>
-    <article class="col-xs-12 col-sm-12 col-md-12 col-lg-1">
-
+    <article class="col-xs-12 col-sm-12 col-md-12 col-lg-1" style="display: none;">
       <input placeholder="结束时间" class="form-control" />
     </article>
-    <article class="col-xs-12 col-sm-12 col-md-12 col-lg-1">
 
+    <article class="col-xs-12 col-sm-12 col-md-12 col-lg-1" style="display: none;">
       <div class="btn-group">
 
         <button type="button" class="btn btn-default pull-right" onclick="javascript:void(0);" >
           搜索
         </button>
+
+
+
       </div>
+
     </article>
-
-
   </div>
 
   <!-- row -->
@@ -65,7 +69,7 @@
         <header>
           <span class="widget-icon"> <i class="fa fa-table"></i> </span>
 
-          <h2>盘点记录列表</h2>
+          <h2>今日采购计划</h2>
         </header>
 
         <!-- widget div-->
@@ -84,16 +88,18 @@
               <thead>
               <tr>
                 <th>序号</th>
-                <th>盘点日期</th>
+                <th>日期</th>
                 <th>品数</th>
-                <th>类型</th>
-                <th>备注</th>
+                <th>购入记录</th>
+                <th>总价</th>
+                <!--<th>创建者</th>-->
+                <th>状态</th>
                 <th>创建时间</th>
                 <th>更新时间</th>
                 <th>操作</th>
               </tr>
               </thead>
-              <tbody id="take_history_body"></tbody>
+              <tbody id="list"></tbody>
             </table>
 
           </div>
@@ -110,6 +116,7 @@
 
   </div>
   <!-- end row -->
+
   <div class="row">
 
     <div class="col-lg-10" id="pagination_area">
@@ -117,7 +124,7 @@
     </div>
 
     <div class="col-lg-2">
-        <span></span>
+      <span></span>
     </div>
   </div>
 
@@ -125,51 +132,56 @@
 <!-- end widget grid -->
 
 
-<script type="text/template" id="tmpl_take_history_tr">
+<script type="text/template" id="tmpl_list">
+
   <tr>
     <td>{{index}}</td>
-    <td>{{today}}</td>
-    <td>{{totalTakeProduct}}</td>
-    <td>{{type}}</td>
+    <td>{{date}}</td>
+    <td>{{totalPlandetail}}</td>
     <td>
-      <$ for (var i in tips) { $>
-          {{(Number(i)+1)}} 条：{{tips[i]}}</br>
+      <$ if(planCost.length==0) { $>
+        暂无
+      <$ }$>
+      <$ for (var i in planCost) { $>
+        {{planCost[i].supplierName}} :{{planCost[i].supplierCost}}</br>
       <$ } $>
     </td>
+    <td>{{planMoneyAmount}}</td>
+    <!--<td>{{username}}</td>-->
+    <td>{{status}}</td>
     <td>{{createat}}</td>
-    <td>{{editat}}</td>
-    <td><a class="btn btn-primary btn-sm" href="javascript:void(0);" onclick="gotoDetail('{{id}}');">详细</a></td>
+    <td>{{updateat}}</td>
+    <td>
+      <a class="btn btn-primary btn-sm" href="javascript:void(0);" onclick="detailPlanView('{{id}}')">详细</a>
+      <a class="btn btn-primary btn-sm" href="javascript:void(0);" onclick="addCostView('{{id}}')">录入成本</a>
+    </td>
   </tr>
 
 </script>
+
 <!-- Modal -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal fade" id="addCostModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
           &times;
         </button>
-        <h4 class="modal-title" id="myModalLabel">追加单位</h4>
+        <h4 class="modal-title" id="costAdd">录入成本</h4>
       </div>
       <div class="modal-body">
 
         <div class="row">
           <div class="col-md-12">
+
             <div class="form-group">
-              <input type="text" class="form-control" placeholder="编号" required />
+
+              <select name="country" class="input-sm" id="supplier_list">
+              </select>
             </div>
 
             <div class="form-group">
-              <input type="text" class="form-control" placeholder="名称" required />
-            </div>
-
-            <div class="form-group">
-              <input type="text" class="form-control" placeholder="基数" required />
-            </div>
-
-            <div class="form-group">
-              <input type="text" class="form-control" placeholder="换算" required />
+              <input type="text" class="form-control" placeholder="金额" required id="supplierCost"/>
             </div>
           </div>
         </div>
@@ -178,7 +190,7 @@
         <button type="button" class="btn btn-default" data-dismiss="modal">
           取消
         </button>
-        <button type="button" class="btn btn-primary">
+        <button type="button" class="btn btn-primary" id="addCostBtn">
           添加
         </button>
       </div>
@@ -186,21 +198,55 @@
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
-<script type="text/javascript" src="/javascripts/take_history.js"/>
+<!-- Modal -->
+<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+          &times;
+        </button>
+        <h4 class="modal-title" id="myModalLabel">新规</h4>
+      </div>
+      <div class="modal-body">
 
+        <div class="row">
+          <div class="col-md-12">
+            <div class="form-group">
+              <input type="text" class="form-control" placeholder="日期" required id="txtDate"/>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">
+          取消
+        </button>
+        <button type="button" class="btn btn-primary" onclick="add();">
+          添加
+        </button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<script type="text/template" id="tmpl_option">
+  <option value="{{value}}">{{name}}</option>
+</script>
+
+<script type="text/javascript" src="/javascripts/plan_history_list.js"></script>
 <script type="text/javascript">
   // DO NOT REMOVE : GLOBAL FUNCTIONS!
   pageSetUp();
   // PAGE RELATED SCRIPTS
   var start = 0;
   var count = 10;
+  var keyword = "";
 
   function initialize() {
 
     smart.paginationInitalized = false;
     $("#pagination_area").html("");
-    render(start, count);
-    event();
+    render(start,count,keyword);
   }
-
 </script>

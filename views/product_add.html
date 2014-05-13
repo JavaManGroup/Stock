@@ -17,6 +17,7 @@
   <div class="row">
 
     <input type="hidden" id="_csrf" name="_csrf" value="<%= csrftoken %>" />
+    <input type="hidden" id="productId" name="productId" value="<%= productId %>" />
     <!-- NEW COL START -->
     <article class="col-sm-6 col-md-12 col-lg-12">
 
@@ -88,20 +89,12 @@
                       <label class="label">产品单位：</label>
                       <label class="select">
                         <select name="country" class="input-sm" id="unit_list">
-                          <option value="0" selected="" disabled="">Country</option>
-                          <option value="244">Aaland Islands</option>
-                          <option value="1">Afghanistan</option>
-                          <option value="2">Albania</option>
                         </select>
                       </label>
 
                       <label class="label">供应商列表：</label>
                       <label class="select">
                         <select name="country" class="input-sm" id="supplier_list">
-                          <option value="0" selected="" disabled="">Country</option>
-                          <option value="244">Aaland Islands</option>
-                          <option value="1">Afghanistan</option>
-                          <option value="2">Albania</option>
                         </select>
                       </label>
 
@@ -137,41 +130,12 @@
                 </section>
               </fieldset>
 
-
-              <fieldset>
-                <div class="row">
-                  <section class="col col-5">
-                    <label class="label">盘点类型：</label>
-                    <label class="toggle">
-                      <input type="radio" name="radio-toggle" checked="checked">
-                      <i data-swchon-text="ON" data-swchoff-text="OFF"></i>日盘</label>
-                    <label class="toggle">
-                      <input type="radio" name="radio-toggle">
-                      <i data-swchon-text="ON" data-swchoff-text="OFF"></i>月盘</label>
-                    <label class="toggle">
-                      <input type="radio" name="radio-toggle">
-                      <i data-swchon-text="ON" data-swchoff-text="OFF"></i>季盘</label>
-                  </section>
-
-                  <div class="col col-2"></div>
-
-                  <section class="col col-5"></section>
-                </div>
-              </fieldset>
-
-              <fieldset>
-
-
-
-
-              </fieldset>
-
               <footer>
-                <button type="submit" class="btn btn-primary" onclick="addAndNext();">
+                <button type="submit" class="btn btn-primary" onclick="addAndNext();" id="addAndNextBtn">
                   提交&录入下一个
                 </button>
 
-                <button type="submit" class="btn btn-primary" onclick="addAndBack();">
+                <button type="submit" class="btn btn-primary" onclick="addAndBack();" id="addBtn">
                   提交&返回
                 </button>
 
@@ -201,6 +165,7 @@
 <script type="text/template" id="tmpl_option">
   <option value="{{value}}">{{name}}</option>
 </script>
+
 <script type="text/javascript" src="/javascripts/product_add.js"></script>
 <!-- SCRIPTS ON PAGE EVENT -->
 <script type="text/javascript">

@@ -125,8 +125,8 @@
     <td>{{createby}}</td>
     <td>{{createat}}</td>
     <td>{{editat}}</td>
-    <td><a class="btn btn-primary btn-sm" href="javascript:void(0);">修改</a>
-        <a class="btn btn-danger btn-sm" href="javascript:void(0);">删除</a></td>
+    <td><a class="btn btn-primary btn-sm" href="javascript:void(0);" onclick="modifyView('{{productId}}');">修改</a>
+        <a class="btn btn-danger btn-sm" href="javascript:void(0);" onclick="remove('{{productId}}');">删除</a></td>
   </tr>
 
 </script>
@@ -147,9 +147,6 @@
     smart.paginationInitalized = false;
     $("#pagination_area").html("");
     render(start, count);
-    smart.doget("/api/product/list.json?start=0&count=20", function (err, result) {
-      console.log(result);
-    });
   }
 
 </script>

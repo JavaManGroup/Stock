@@ -14,14 +14,15 @@ var mongo       = smart.util.mongoose
  * 菜品的schema
  * @type {schema}
  */
-var Room = new schema({
-    roomNum     :   { type: String, description: "编号"}
-  , roomName    :   { type: String, description: "名称"}
-  , valid       :   { type: Number, description: "有效" , default:1}
-  , createat    :   { type: Date,   description: "创建时间" }
-  , createby    :   { type: String, description: "创建者" }
-  , editat      :   { type: Date,   description: "最终修改时间" }
-  , editby      :   { type: String, description: "最终修改者" }
+var Plantoday = new schema({
+    productId       :   { type: String, description: "编号" , index :true }
+  , amount          :   { type: Number, description: "编号" }
+  , num             :   { type: Number, description: "编号" }
+  , valid           :   { type: Number, description: "产品名称" , default:1 }
+  , createat        :   { type: Date,   description: "创建时间" }
+  , createby        :   { type: String, description: "创建者" }
+  , editat          :   { type: Date,   description: "最终修改时间" }
+  , editby          :   { type: String, description: "最终修改者" }
 });
 
 /**
@@ -30,20 +31,27 @@ var Room = new schema({
  * @returns {model} item model
  */
 function model(dbname) {
-  return conn.model(dbname, "Room", Room);
+  return conn.model(dbname, "Plantoday", Plantoday);
 }
 
+
+exports.has = function(code, productId , callback){
+  var plantoday = model(code);
+  plantoday.findOne({productId:productId  , valid : 1},function(err, result) {
+    callback(err, result);
+  });
+}
 /**
  * 添加素材
  * @param {string} code 公司code
  * @param {object} newItem    新的菜品
  * @param {function} callback 返回素材添加结果
  */
-exports.add = function(code, newRoom, callback) {
+exports.add = function(code, newPlantoday, callback) {
 
-  var room = model(code);
+  var plantoday = model(code);
 
-  new room(newRoom).save(function(err, result) {
+  new plantoday(newPlantoday).save(function(err, result) {
     callback(err, result);
   });
 };
@@ -55,11 +63,11 @@ exports.add = function(code, newRoom, callback) {
  * @param {object} conditions 更新条件
  * @param {function} callback 返回菜品更新结果
  */
-exports.update = function(code, roomId, newRoom, callback) {
+exports.update = function(code, plantodayId, newPlantoday, callback) {
 
-  var room = model(code);
+  var plantoday = model(code);
 
-  room.findByIdAndUpdate(roomId, newRoom, function(err, result) {
+  plantoday.findByIdAndUpdate(plantodayId, newPlantoday, function(err, result) {
     callback(err, result);
   });
 };
@@ -70,11 +78,11 @@ exports.update = function(code, roomId, newRoom, callback) {
  * @param {string} itemId 菜品ID
  * @param {function} callback 返回指定菜品
  */
-exports.get = function(code, roomId, callback) {
+exports.get = function(code, plantodayId, callback) {
 
-  var room = model(code);
+  var plantoday = model(code);
 
-  room.findOne({_id: roomId}, function(err, result) {
+  plantoday.findOne({_id: plantodayId}, function(err, result) {
     callback(err, result);
   });
 };
@@ -86,11 +94,11 @@ exports.get = function(code, roomId, callback) {
  * @param {string} itemId 菜品ID
  * @param {function} callback 返回删除结果
  */
-exports.remove = function(code, uid, roomId, callback) {
+exports.remove = function(code, uid, plantodayId, callback) {
 
-  var room = model(code);
+  var plantoday = model(code);
 
-  room.findByIdAndUpdate(roomId,  {valid: 0, editat: new Date(), editby: uid}, function(err, result) {
+  plantoday.findByIdAndUpdate(plantodayId,  {valid: 0, editat: new Date(), editby: uid}, function(err, result) {
     callback(err, result);
   });
 };
@@ -105,9 +113,9 @@ exports.remove = function(code, uid, roomId, callback) {
  */
 exports.getList = function(code, condition, start, limit, callback) {
 
-  var room = model(code);
+  var plantoday = model(code);
 
-  room.find(condition)
+  plantoday.find(condition)
     .skip(start || 0)
     .limit(limit || 20)
     .sort({editat: -1})
@@ -124,9 +132,9 @@ exports.getList = function(code, condition, start, limit, callback) {
  */
 exports.total = function(code, condition, callback) {
 
-  var room = model(code);
+  var plantoday = model(code);
 
-  room.count(condition).exec(function(err, count) {
+  plantoday.count(condition).exec(function(err, count) {
     callback(err, count);
   });
 };

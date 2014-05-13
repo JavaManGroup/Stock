@@ -16,8 +16,23 @@
 
 <div class="row">
   <div class="col-lg-12">
-
-
+    <div style="border-color: gray;background-color: #FFFFFF;margin-bottom: 20px; padding: 5px" id="categoryList">
+      <table>
+        <tbody>
+          <tr class="row  bound-top">
+            <td class="row-hd" style="width: 100px;">
+              <div class="col-lg-12">
+              分类
+              </div>
+            </td>
+            <td class="row-bd">
+              <div class="col-lg-12" id="category_list">
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 
@@ -65,12 +80,14 @@
               <thead>
               <tr>
                 <th>序号</th>
-                <th>编号</th>
-                <th>名称</th>
+                <!--<th width="200">编号</th>-->
+                <th width="300">名称</th>
+                <th>类型</th>
                 <th>单位</th>
                 <th>原数</th>
-                <th>应有数</th>
+                <!--<th>应有数</th>-->
                 <th width="100">实际数量</th>
+                <th width="100">备注</th>
               </tr>
               </thead>
               <tbody id="taking_list"></tbody>
@@ -94,7 +111,6 @@
 
   <div class="row">
     <div class="col-lg-12">
-
       <button type="button" class="btn btn-default pull-right" onclick="window.history.back();" style="margin: 10px 0 0 5px;">
         返回
       </button>
@@ -103,34 +119,79 @@
         提交&amp;返回
       </button>
 
-      <button type="submit" class="btn btn-primary pull-right" style="margin: 10px 0 0 5px;" onclick="add();">
+      <button type="submit" class="btn btn-primary pull-right" style="margin: 10px 0 0 5px;" onclick="appendTakeList();">
         追加
       </button>
-
     </div>
   </div>
 
 </section>
 
+<script type="text/template" id="tmpl_category_list">
 
+  <p style="float: left; margin-right: 20px;"><input type="checkbox" value="{{id}}" index="{{index}}" class="categoryBox" onclick="onCheckedTouched(this)">{{value}}</p>
+</script>
+
+<script type="text/template" id="tmpl_product_list">
+  <tr>
+    <td>{{index}}</td>
+    <td>{{productSN}}</td>
+    <td>{{productName}}</td>
+    <td>{{category}}</td>
+    <td>{{room}}</td>
+    <td>{{unit}}</td>
+    <td>{{productPrice}}</td>
+    <td><a class="btn btn-primary btn-sm" href="javascript:void(0);" onclick="selectBtn('{{id}}')">选择</a></td>
+  </tr>
+</script>
 
 <!-- end widget grid -->
 <script type="text/template" id="tmpl_taking_list">
-  <tr>
+  <tr class="takeRow">
     <td>{{index}}</td>
-    <td>{{sn}}</td>
+    <!--<td>{{sn}}</td>-->
     <td>{{name}}</td>
+    <td>{{category}}</td>
     <td>{{unit}}</td>
-    <td>{{amount}}</td>
-    <td>{{expect}}</td>
-    <td><input class="form-control takeNum" data="{{id}}"></td>
+    <td>{{originalAmount}}</td>
+    <!--<td>{{expect}}</td>-->
+    <td><input class="form-control takeNum takeData" data="{{id}}" productId="{{productId}}"/></td>
+    <td><input class="form-control takeNum takeTips" productTipsId="{{id}}" productTipsId="{{productId}}"/></td>
+  </tr>
+</script>
+
+<script type="text/template" id="tmpl_option">
+  <option value="{{value}}"></option>
+</script>
+<script type="text/template" id="tmpl_taking_input_list">
+  <tr>
+    <td></td>
+    <td>
+      <input type="text" list="listSN" class="form-control" style="width: 100%">
+      <datalist id="listSN">
+        <% for (var i  in productList) { %>
+        <option value="<%=productList[i].productSN%>"></option>
+        <% } %>
+      </datalist>
+    </td>
+    <td>
+      <input type="text" list="listName" class="form-control" style="width: 100%">
+      <datalist id="listName">
+        <% for (var i  in productList) { %>
+        <option value="<%=productList[i].productName%>"></option>
+        <% } %>
+      </datalist>
+    </td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td><input class="form-control takeNum"></td>
   </tr>
 </script>
 
 
-
 <!-- Modal -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal fade" id="selectModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -142,38 +203,47 @@
       <div class="modal-body">
 
         <div class="row">
-          <div class="col-md-12">
-            <div class="form-group">
-              <input type="text" class="form-control" placeholder="编号" required />
-            </div>
+          <div class="col-md-12" id="popup_product_list">
+            <table class="table table-bordered table-striped table-hover">
+              <thead>
+              <tr>
+                <th>序号</th>
+                <th>编号</th>
+                <th>名称</th>
+                <th>类别</th>
+                <th>库房</th>
+                <th>单位</th>
+                <th>价格</th>
+                <th>操作</th>
+              </tr>
+              </thead>
+              <tbody id="product_list"></tbody>
+            </table>
 
-            <div class="form-group">
-              <input type="text" class="form-control" placeholder="名称" required />
-            </div>
-
-            <div class="form-group">
-              <input type="text" class="form-control" placeholder="基数" required />
-            </div>
-
-            <div class="form-group">
-              <input type="text" class="form-control" placeholder="换算" required />
-            </div>
           </div>
         </div>
+        <div class="row">
+          <div class="col-md-12" id="popup_pagination_area">
+          </div>
+        </div>
+
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">
-          取消
-        </button>
-        <button type="button" class="btn btn-primary">
-          添加
-        </button>
+
+          <button type="button" class="btn btn-default" data-dismiss="modal">
+            取消
+          </button>
+          <button type="button" class="btn btn-primary">
+            添加
+          </button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
+
 <script type="text/javascript" src="js/plugin/bootstrap-timepicker/bootstrap-timepicker.min.js"></script>
+
 <script type="text/javascript" src="/javascripts/taking_list.js"></script>
 
 <script type="text/javascript">
@@ -191,6 +261,7 @@
     smart.paginationInitalized = false;
     $("#pagination_area").html("");
     render(start,count,keyword);
+    renderCategory();
     event();
   }
 </script>

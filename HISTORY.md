@@ -1,0 +1,2 @@
+
+ln -s ../../SmartCore/ smartcore

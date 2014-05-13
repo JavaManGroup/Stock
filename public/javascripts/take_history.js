@@ -4,6 +4,9 @@ function gotoDetail(id,type){
 
   var url = "ajax/take/detail?takeId=" + id +"&type=" + type;
   var container = $('#content');
+
+  window.location.hash = url;
+
   loadURL(url, container);
 };
 
@@ -19,24 +22,21 @@ function render(start, count,keyword) {
     var tmpl = $('#tmpl_take_history_tr').html();
     var container = $("#take_history_body");
     container.html("");
-    console.log(result);
 
     _.each(list, function (row) {
-      console.log(row);
 
       container.append(_.template(tmpl, {
 
         index: index++,
 
         id : row._id,
-        total: 12,
+        totalTakeProduct: row.totalTakeProduct,
         totalPrice: 12,
         today: row.today,
         createat: smart.date(row.createat),
         editat : smart.date(row.editat),
-        userName: "123",
         tips: row.tips,
-        type: row.type,
+        type: type(row.type),
         status: row.status
       }));
     });
@@ -45,6 +45,29 @@ function render(start, count,keyword) {
       render(active,count);
     });
   });
+}
+
+function renderTips(tips) {
+  var content = "";
+  for(var i in tips) {
+    content = content +  tips[i] + "\n"
+  }
+  return content
+}
+
+function type(t) {
+
+  if (t == 1) {
+    return "日盘";
+  } else if (t == 2) {
+    return "月盘";
+  } else if (t == 3) {
+    return "季盘";
+  } else if (t == 4) {
+    return "年盘";
+  } else {
+    return "";
+  }
 }
 
 function event() {

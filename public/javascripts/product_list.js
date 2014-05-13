@@ -1,19 +1,31 @@
 
-function addView(){
-  var url = "ajax/product/add";
+
+function modifyView(id) {
+
+  var url = "ajax/product/add?id=" + id;
   var container = $('#content');
+
+  window.location.hash = url;
+
   loadURL(url, container);
 }
+
+function addView(){
+
+  var url = "ajax/product/add";
+  var container = $('#content');
+
+  window.location.hash = url;
+
+  loadURL(url, container);
+}
+
 function render(start, count,keyword) {
 
   var jsonUrl = "/api/product/list.json?";
   jsonUrl += "start=" + start;
   jsonUrl += "&count=" + count;
 
-  if(keyword){
-    keyword = keyword ? encodeURIComponent(keyword) : "";
-    jsonUrl += "&keyword=" + keyword;
-  }
   smart.doget(jsonUrl, function(e, result){
 
     if (smart.error(e, "", true)) {
@@ -30,6 +42,7 @@ function render(start, count,keyword) {
 
       container.append(_.template(tmpl, {
         index : index++ ,
+        productId : row._id,
         productSN :row.productSN ,
         productName: row.productName ,
         category : row.category.name ,

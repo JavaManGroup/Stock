@@ -18,15 +18,18 @@ var Takedetail = new schema({
 
     takeId          :   { type: String, description: "编号" ,index :true }
   , stockId         :   { type: String, description: "编号" ,index :true }
+  , stockTips       :   [String]
   , amount          :   { type: Number, description: "数量" }
-  , type            :   { type: Number, description: "类型" }
+  , type            :   { type: Number, description: "类型" ,index :true}
   , productId       :   { type: String, description: "产品编号" ,index :true }
   , productSN     :   { type: String, description: "产品名称" }
   , productName     :   { type: String, description: "产品名称" }
   , productUnit     :   { type: String, description: "单位" }
   , productRoom     :   { type: String, description: "库房" }
   , productCategory :   { type: String, description: "类型" }
-  , original        :   { type: Number, description: "盘点类型  1 日盘 2  月盘  3 季盘  4" }
+  , original        :   { type: Number, description: "原数" }
+  , adjustment      :   { type: Number, description: "调整数值" }
+
   , status          :   { type: Number, description: "盘点类型  1 提交未审核 2 提交已审核  3 取下修改" }
 
   , valid           :   { type: Number, description: "产品名称" , default:1 }
@@ -113,6 +116,31 @@ exports.remove = function(code, uid, takedetailId, callback) {
   takedetail.findByIdAndUpdate(takedetailId,  {valid: 0, editat: new Date(), editby: uid}, function(err, result) {
     callback(err, result);
   });
+};
+
+exports.getOriginalByProductId = function (code, productId, callback) {
+
+  var takedetail = model(code);
+
+  takedetail.find({productId:productId})
+    .skip(0)
+    .limit(1)
+    .sort({editat: -1})
+    .exec(function(err, result) {
+      callback(err, result);
+    });
+};
+
+exports.getOriginal = function (code, productId, type, stockId, callback) {
+
+  var takedetail = model(code);
+  takedetail.find({stockId: stockId , productId:productId ,type:type})
+    .skip(0)
+    .limit(1)
+    .sort({editat: -1})
+    .exec(function(err, result) {
+      callback(err, result);
+    });
 };
 
 /**

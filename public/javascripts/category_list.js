@@ -11,13 +11,21 @@ function categoryDeleteBtn(dataId){
   smart.dopost("/api/category/delete.json",data ,function(err,result){
 
     render(0, count);
+
+    $.smallBox({
+      title : "提示",
+      content : "删除成功",
+      color : "#739E73",
+      iconSmall : "fa fa-bullhorn",
+      timeout : 2000
+    });
   });
 }
 function categoryUpdateBtn(dataId) {
 
   $('#categoryAddModal').modal('show');
   smart.doget("/api/category/get.json?categoryId=" + dataId ,function(err,result){
-    console.log(result._id);
+
     $("#categoryId").val(result._id);
     $("#categoryName").val(result.name);
   });
@@ -28,37 +36,69 @@ function event(){
 
     var categoryName = $("#categoryName").val();
     var categoryId = $("#categoryId").val();
+
+    if (categoryName.length == 0) {
+
+      $.smallBox({
+        title : "提示",
+        content : "请输入名称",
+        color : "#a90329",
+        iconSmall : "fa fa-bullhorn",
+        timeout : 2000
+      });
+      return;
+    }
+
     var data = {
       categoryName : categoryName
     };
 
     if(categoryId) {
       data.categoryId = categoryId;
-      smart.dopost("/api/category/update.json",data ,function(err,result){
+      smart.dopost("/api/category/update.json",data ,function(e,result){
+
+        if (smart.error(e || result.systemError, result.systemError || "", true)) {
+          return;
+        }
 
         render(0, count);
         $("#categoryId").val('');
-        $('#categoryAddModal').modal('hide')
+        $('#categoryAddModal').modal('hide');
+
+        $.smallBox({
+          title : "提示",
+          content : "修改成功",
+          color : "#739E73",
+          iconSmall : "fa fa-bullhorn",
+          timeout : 2000
+        });
+
       });
       return;
     }
 
     $("#categoryName").val("");
-    smart.dopost("/api/category/add.json",data ,function(err,result){
+    smart.dopost("/api/category/add.json", data, function (e, result) {
 
-      var url = "ajax/category";
-      var container = $('#content');
+      if (smart.error(e || result.systemError, result.systemError || "", true)) {
+        return;
+      }
 
       smart.paginationInitalized = false;
       $("#pagination_area").html("");
       render(0, count);
-      $('#categoryAddModal').modal('hide')
+      $('#categoryAddModal').modal('hide');
+
+      $.smallBox({
+        title : "提示",
+        content : "添加成功",
+        color : "#739E73",
+        iconSmall : "fa fa-bullhorn",
+        timeout : 2000
+      });
     });
   });
 
-  $(".categoryUpdateBtn a").click(function(e){
-
-  });
 }
 
 function render(start, count,keyword) {
@@ -73,7 +113,7 @@ function render(start, count,keyword) {
   }
   smart.doget(jsonUrl, function(e, result){
 
-    if (smart.error(e, "", true)) {
+    if (smart.error(e || result.systemError, result.systemError || "", true)) {
       return;
     }
 
@@ -108,7 +148,6 @@ function render(start, count,keyword) {
       render(active,count);
     });
   });
-
-}
+};
 
 

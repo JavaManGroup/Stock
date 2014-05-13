@@ -14,22 +14,20 @@ var mongo       = smart.util.mongoose
  * 菜品的schema
  * @type {schema}
  */
-var Stocktake = new schema({
-    amount          :   { type: Number, description: "编号" }
-  , type            :   { type: Number, description: "盘点类型  1 日盘 2  月盘  3 季盘  4" }
-  , today           :   { type: String, description: "今天日期" }
-  , num             :   { type: String, description: "编号" }
-  , tips            :   [String]
-  , status          :   { type: Number, description: "盘点类型  1 提交未审核 2 提交已审核  3 取下修改" }
-
-  , todayList       : [{
-
-    detailId :  { type: String, description: "编号" },
-    productId:  { type: String, description: "编号" }
-  }]
-
+var Planhistory = new schema({
+    num             :   { type: Number, description: "编号" }
+  , date            :   { type: String, description: "用户输入的日期" }
+  , historyTips     :   [String]
+  , planCost: [
+    {
+      supplierName: { type: String, description: "供应商名称" },
+      supplierId:  { type: String, description: "供应商编号" },
+      supplierCost: { type: Number, description: "供应商录入价格" }
+    }
+  ]
+  , planMoneyAmount :   { type: Number, description: "今日订单总钱数" , default:1 }
+  , status          :   { type: Number, description: "产品名称 1 准备状态  2 提交状态 3 取下状态 " , default:1 }
   , valid           :   { type: Number, description: "产品名称" , default:1 }
-
   , createat        :   { type: Date,   description: "创建时间" }
   , createby        :   { type: String, description: "创建者" }
   , editat          :   { type: Date,   description: "最终修改时间" }
@@ -42,14 +40,13 @@ var Stocktake = new schema({
  * @returns {model} item model
  */
 function model(dbname) {
-  return conn.model(dbname, "Stocktake", Stocktake);
+  return conn.model(dbname, "Planhistory", Planhistory);
 }
 
 
-exports.has = function(code, today, type , callback){
-  var stocktake = model(code);
-
-  stocktake.findOne({today:today ,type : type , valid : 1},function(err, result) {
+exports.has = function(code, date , callback){
+  var planhistory = model(code);
+  planhistory.findOne({date:date  , valid : 1},function(err, result) {
     callback(err, result);
   });
 }
@@ -59,11 +56,11 @@ exports.has = function(code, today, type , callback){
  * @param {object} newItem    新的菜品
  * @param {function} callback 返回素材添加结果
  */
-exports.add = function(code, newStocktake, callback) {
+exports.add = function(code, newPlanhistory, callback) {
 
-  var stocktake = model(code);
+  var planhistory = model(code);
 
-  new stocktake(newStocktake).save(function(err, result) {
+  new planhistory(newPlanhistory).save(function(err, result) {
     callback(err, result);
   });
 };
@@ -75,11 +72,11 @@ exports.add = function(code, newStocktake, callback) {
  * @param {object} conditions 更新条件
  * @param {function} callback 返回菜品更新结果
  */
-exports.update = function(code, stocktakeId, newStocktake, callback) {
+exports.update = function(code, planhistoryId, newPlanhistory, callback) {
 
-  var stocktake = model(code);
+  var planhistory = model(code);
 
-  stocktake.findByIdAndUpdate(stocktakeId, newStocktake, function(err, result) {
+  planhistory.findByIdAndUpdate(planhistoryId, newPlanhistory, function(err, result) {
     callback(err, result);
   });
 };
@@ -90,11 +87,11 @@ exports.update = function(code, stocktakeId, newStocktake, callback) {
  * @param {string} itemId 菜品ID
  * @param {function} callback 返回指定菜品
  */
-exports.get = function(code, stocktakeId, callback) {
+exports.get = function(code, planhistoryId, callback) {
 
-  var stocktake = model(code);
+  var planhistory = model(code);
 
-  stocktake.findOne({_id: stocktakeId}, function(err, result) {
+  planhistory.findOne({_id: planhistoryId}, function(err, result) {
     callback(err, result);
   });
 };
@@ -106,11 +103,11 @@ exports.get = function(code, stocktakeId, callback) {
  * @param {string} itemId 菜品ID
  * @param {function} callback 返回删除结果
  */
-exports.remove = function(code, uid, stocktakeId, callback) {
+exports.remove = function(code, uid, planhistoryId, callback) {
 
-  var stocktake = model(code);
+  var planhistory = model(code);
 
-  stocktake.findByIdAndUpdate(stocktakeId,  {valid: 0, editat: new Date(), editby: uid}, function(err, result) {
+  planhistory.findByIdAndUpdate(planhistoryId,  {valid: 0, editat: new Date(), editby: uid}, function(err, result) {
     callback(err, result);
   });
 };
@@ -125,9 +122,9 @@ exports.remove = function(code, uid, stocktakeId, callback) {
  */
 exports.getList = function(code, condition, start, limit, callback) {
 
-  var stocktake = model(code);
+  var planhistory = model(code);
 
-  stocktake.find(condition)
+  planhistory.find(condition)
     .skip(start || 0)
     .limit(limit || 20)
     .sort({editat: -1})
@@ -144,9 +141,9 @@ exports.getList = function(code, condition, start, limit, callback) {
  */
 exports.total = function(code, condition, callback) {
 
-  var stocktake = model(code);
+  var planhistory = model(code);
 
-  stocktake.count(condition).exec(function(err, count) {
+  planhistory.count(condition).exec(function(err, count) {
     callback(err, count);
   });
 };

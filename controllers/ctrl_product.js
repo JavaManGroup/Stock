@@ -6,16 +6,25 @@ var _ = smart.util.underscore
   , util = smart.framework.util
   , ctrlUser    = smart.ctrl.user
   , context   = smart.framework.context
+  , datastore = smart.ctrl.datastore
   , product = require('../modules/mod_product.js')
+  , stock = require('../modules/mod_stock.js')
   , category = require('../modules/mod_category.js')
   , unit = require('../modules/mod_unit.js')
   , room = require('../modules/mod_room.js')
+  , takedetail = require('../modules/mod_takedetail.js')
   , supplier = require('../modules/mod_supplier.js');
 
-function getProduct(code, productId, callback) {
-  console.log(productId);
+
+
+
+function getProduct(handler, productId, callback) {
+
+  var code = handler.code;
+  var uid  = handler.uid;
+  var lang = handler.lang;
+
   product.get(code, productId, function (err, result) {
-    console.log(result);
     async.parallel({
       category: function (callback) {
 
@@ -24,20 +33,44 @@ function getProduct(code, productId, callback) {
         });
       },
       unit: function (callback) {
-        unit.get(code, result.unitId, function (err, resultUnit) {
+
+
+        var unitHandler = new context().create(uid, code, lang);
+        unitHandler.addParams("appName", "Stock");
+        unitHandler.addParams("schemaName", "unit");
+        unitHandler.addParams("boardName", "get");
+        unitHandler.addParams("_id", result.unitId);
+
+        datastore.getOne(unitHandler, function (err, resultUnit) {
           callback(null, resultUnit);
         });
       },
       room: function (callback) {
-        room.get(code, result.roomId, function (err, resultRoom) {
+
+        var roomHandler = new context().create(uid, code, lang);
+        roomHandler.addParams("appName", "Stock");
+        roomHandler.addParams("schemaName", "room");
+        roomHandler.addParams("boardName", "get");
+        roomHandler.addParams("_id", result.roomId);
+
+        datastore.getOne(roomHandler, function (err, resultRoom) {
           callback(null, resultRoom);
         });
       },
       supplier: function (callback) {
-        supplier.get(code, result.supplierId, function (err, resultSupplier) {
+
+
+        var supplierHandler = new context().create(uid, code, lang);
+        supplierHandler.addParams("appName", "Stock");
+        supplierHandler.addParams("schemaName", "supplier");
+        supplierHandler.addParams("boardName", "get");
+        supplierHandler.addParams("_id", result.supplierId);
+
+        datastore.getOne(supplierHandler, function (err, resultSupplier) {
           callback(null, resultSupplier);
         });
       },
+
       user :function(callback){
         var handler = new context().create();
         handler.addParams("uid", result.createby);
@@ -52,17 +85,70 @@ function getProduct(code, productId, callback) {
       result._doc.room = results.room;
       result._doc.supplier = results.supplier;
       result._doc.user = results.user;
-      console.log(result);
       callback(err, result);
     });
   });
 }
 
-exports.get = function(handler ,callback) {
+exports.remove = function(handler ,callback) {
   var code = handler.code;
+
   var params = handler.params;
   var productId = params.productId;
-  getProduct(code, productId, function(err, result){
+
+  product.remove(code,productId ,function(err, result){
+
+    if (err) {
+      return callback(new error.InternalServer(err));
+    }
+
+    return callback(null,result);
+  });
+}
+
+exports.update = function(handler ,callback) {
+  var code = handler.code;
+
+  var params = handler.params;
+
+  var productData = {
+    productName         : params.productName,
+    productSN           : params.productSN,
+
+    categoryId          : params.productCategoryId ,
+    unitId              : params.productUnitId ,
+    roomId              : params.productRoomId ,
+    supplierId          : params.productSupplierId ,
+
+    productCode         : params.productCode,
+    productPrice        : params.productPrice,
+    productDescription  : params.productDescription,
+
+    valid               : 1,
+
+    createat: new Date(),
+    createby: handler.uid,
+    editat: new Date(),
+    editby: handler.uid
+  };
+  var productId = params.productId;
+
+  product.update(code,productId,productData ,function(err,result){
+
+    if (err) {
+      return callback(new error.InternalServer(err));
+    }
+
+    return callback(null,result);
+  });
+
+}
+
+exports.get = function(handler ,callback) {
+
+  var params = handler.params;
+  var productId = params.productId;
+  getProduct(handler, productId, function(err, result){
 
     if (err) {
       return callback(new error.InternalServer(err));
@@ -74,7 +160,7 @@ exports.get = function(handler ,callback) {
 
     return callback(null,result);
   });
-}
+};
 
 exports.add = function (handler, callback) {
   var code = handler.code;
@@ -94,6 +180,8 @@ exports.add = function (handler, callback) {
     productPrice        : params.productPrice,
     productDescription  : params.productDescription,
 
+    valid               : 1,
+
     createat: new Date(),
     createby: handler.uid,
     editat: new Date(),
@@ -103,20 +191,20 @@ exports.add = function (handler, callback) {
   product.add(code,productData,function(err, result){
     return callback(err, result);
   });
-}
+};
 
 exports.list = function (handler, callback) {
 
   var code = handler.code;
-  var condition = {};
+  var condition = {
+    valid : 1
+  };
   var params = handler.params;
 
   if (params.categoryId) {
     condition.categoryId = params.categoryId;
   }
   if (params.ids) {
-    console.log(params.ids);
-
     condition._id = {$in:params.ids.split(",")};
   }
 
@@ -138,13 +226,35 @@ exports.list = function (handler, callback) {
       result[i]._doc.index_ = i;
     }
 
-    console.log(result);
-
     async.each(result,
+
       function (obj, cb) {
-        getProduct(code, result[obj._doc.index_]._id, function (err, productDocs) {
-          productList[obj._doc.index_] = productDocs;
-          cb(null);
+
+        getProduct(handler, result[obj._doc.index_]._id, function (err, productDocs) {
+
+          takedetail.getOriginalByProductId(code,productDocs._id,function(err,original){
+            productList[obj._doc.index_] = productDocs;
+            if(original[0].adjustment) {
+              productList[obj._doc.index_]._doc.originalAmount = original[0].adjustment
+            } else {
+              productList[obj._doc.index_]._doc.originalAmount = original[0].amount || 0;
+            }
+
+            stock.getByProductId(code, productDocs._id, function (err, stockDocs) {
+
+              if (stockDocs) {
+
+                if(stockDocs.lower){
+                  productList[obj._doc.index_]._doc.lower = stockDocs.lower || 0;
+                }
+                cb(null);
+
+              } else {
+
+                cb(null);
+              }
+            });
+          });
         });
       },
       function (err, result) {
@@ -160,4 +270,4 @@ exports.list = function (handler, callback) {
       }
     );
   });
-}
+};

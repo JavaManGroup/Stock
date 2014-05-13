@@ -15,103 +15,134 @@ function add() {
 
   var roomId = $("#roomId").val();
 
+  if (roomNum.length == 0 || roomName.length == 0) {
+
+    $.smallBox({
+      title : "提示",
+      content : "请检查输入的内容",
+      color : "#a90329",
+      iconSmall : "fa fa-bullhorn",
+      timeout : 2000
+    });
+    return;
+  }
+
   var data = {
     roomNum   : roomNum   ,
     roomName  : roomName
   };
-
+  var filter = {
+    _id : roomId
+  }
   if (roomId) {
-    data.roomId = roomId;
-    smart.dopost("/api/room/update.json",data ,function(err,result){
+
+    smart.doput("/room/update", {
+      filter: filter,
+      data: data
+    }, function (e, result) {
+
+      if (smart.error(e || result.systemError, result.systemError || "", true)) {
+        return;
+      }
 
       render(0, count);
       $("#roomId").val('');
-      $('#roomAddModal').modal('hide')
+      $('#roomAddModal').modal('hide');
+
+      $.smallBox({
+        title : "提示",
+        content : "修改成功",
+        color : "#739E73",
+        iconSmall : "fa fa-bullhorn",
+        timeout : 2000
+      });
     });
     return;
   }
 
   $("#roomName").val("");
-  smart.dopost("/api/room/add.json",data ,function(err,result){
+  smart.dopost("/room/add", { data: data}, function (e, result) {
+
+    if (smart.error(e || result.systemError, result.systemError || "", true)) {
+      return;
+    }
 
     smart.paginationInitalized = false;
     $("#pagination_area").html("");
     render(0, count);
-    $('#roomAddModal').modal('hide')
+    $('#roomAddModal').modal('hide');
+
+    $.smallBox({
+      title : "提示",
+      content : "修改成功",
+      color : "#739E73",
+      iconSmall : "fa fa-bullhorn",
+      timeout : 2000
+    });
   });
 }
 
 
 function deleteBtn(dataId){
 
-  var data = {
-    roomId : dataId
-  }
+  $.SmartMessageBox({
+    title : "确认",
+    content : "是否删除",
+    buttons : "[取消],[确认]",
+    input : "text"
+  }, function(ButtonPress, value) {
 
-  smart.dopost("/api/room/delete.json",data ,function(err,result){
+    if (ButtonPress == "确认") {
 
-    smart.paginationInitalized = false;
-    $("#pagination_area").html("");
-    render(0, count);
+      var filter = {
+        _id : dataId
+      }
+
+      smart.dodelete("/room/remove", {
+        filter: filter
+      }, function (e, result) {
+
+        if (smart.error(e || result.systemError, result.systemError || "", true)) {
+          return;
+        }
+
+        smart.paginationInitalized = false;
+        $("#pagination_area").html("");
+        render(0, count);
+
+        $.smallBox({
+          title : "提示",
+          content : "修改成功",
+          color : "#739E73",
+          iconSmall : "fa fa-bullhorn",
+          timeout : 2000
+        });
+      });
+    }
   });
 }
+
 function updateBtn(dataId) {
 
   $('#roomAddModal').modal('show');
   $('#addBtn').html("修改");
-  smart.doget("/api/room/get.json?roomId=" + dataId ,function(err,result){
+  smart.doget("/room/get?_id=" + dataId ,function(err,result){
+    var obj = result.items[0];
 
-    $("#roomId").val(result._id);
-    $("#roomNum").val(result.roomNum);
-    $("#roomName").val(result.roomName);
-    $("#roomRadix").val(result.roomRadix);
-    $("#roomScale").val(result.roomScale);
+    $("#roomId").val(obj._id);
+    $("#roomNum").val(obj.roomNum);
+    $("#roomName").val(obj.roomName);
   });
 }
 
 function event(){
-  $("#categoryAddBtn").click(function(){
-
-    var categoryName = $("#categoryName").val();
-    var categoryId = $("#categoryId").val();
-    var data = {
-      categoryName : categoryName
-    };
-
-    if(categoryId) {
-      data.categoryId = categoryId;
-      smart.dopost("/api/category/update.json",data ,function(err,result){
-
-        render(0, count);
-        $("#categoryId").val('');
-        $('#categoryAddModal').modal('hide')
-      });
-      return;
-    }
-
-    $("#categoryName").val("");
-    smart.dopost("/api/category/add.json",data ,function(err,result){
-
-      var url = "ajax/category";
-      var container = $('#content');
-
-      smart.paginationInitalized = false;
-      $("#pagination_area").html("");
-      render(0, count);
-      $('#categoryAddModal').modal('hide')
-    });
-  });
-
-  $(".categoryUpdateBtn a").click(function(e){
-
-  });
 }
 
 function render(start, count,keyword) {
 
-  var jsonUrl = "/api/room/list.json?";
-  jsonUrl += "start=" + start;
-  jsonUrl += "&count=" + count;
+  var jsonUrl = "/room/list?";
+  jsonUrl += "skip=" + start;
+  jsonUrl += "&limit=" + count;
 
   if(keyword){
     keyword = keyword ? encodeURIComponent(keyword) : "";
@@ -134,14 +165,14 @@ function render(start, count,keyword) {
     _.each(list, function(row){
 
       container.append(_.template(tmpl, {
-        index : index ++ ,
-        roomId    : row._id ,
-        roomNum   : row.roomNum   ,
-        roomName  : row.roomName  ,
-        createat : smart.date(row.createat) ,
-        userName :"浩",
-        editat : smart.date(row.editat),
-        createby : row.createby
+        index: index++,
+        roomId: row._id,
+        roomNum: row.roomNum,
+        roomName: row.roomName,
+        createat: smart.date(row.createAt),
+        userName: result.options.user[row.createBy].first,
+        editat: smart.date(row.updateAt),
+        createby: row.createby
       }));
     });
 

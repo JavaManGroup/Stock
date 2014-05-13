@@ -17,57 +17,140 @@ function add() {
 
   var supplierId = $("#supplierId").val();
 
+  if (supplierName.length == 0 || supplierNum.length == 0 || supplierPhone.length == 0) {
+
+    $.smallBox({
+      title : "提示",
+      content : "请检查输入的内容",
+      color : "#a90329",
+      iconSmall : "fa fa-bullhorn",
+      timeout : 2000
+    });
+
+    return;
+  }
+
+
   var data = {
     supplierNum   : supplierNum   ,
     supplierName  : supplierName  ,
     supplierPhone : supplierPhone
   };
 
+  var filter = {
+    _id : supplierId
+  };
+
   if (supplierId) {
-    data.supplierId = supplierId;
-    smart.dopost("/api/supplier/update.json",data ,function(err,result){
+
+    return smart.doput("/supplier/update",{
+      filter: filter,
+      data : data
+    }, function (e, result) {
+
+      if (smart.error(e || result.systemError, result.systemError || "", true)) {
+        return;
+      }
 
       render(0, count);
       $("#supplierId").val('');
-      $('#supplierAddModal').modal('hide')
+      $('#supplierAddModal').modal('hide');
+
+      $.smallBox({
+        title : "提示",
+        content : "修改成功",
+        color : "#739E73",
+        iconSmall : "fa fa-bullhorn",
+        timeout : 2000
+      });
     });
-    return;
   }
 
   $("#supplierName").val("");
-  smart.dopost("/api/supplier/add.json",data ,function(err,result){
+  smart.dopost("/supplier/add", {data: data}, function (err, result) {
 
     smart.paginationInitalized = false;
     $("#pagination_area").html("");
     render(0, count);
     $('#supplierAddModal').modal('hide')
+
+    $.smallBox({
+      title : "提示",
+      content : "添加成功",
+      color : "#739E73",
+      iconSmall : "fa fa-bullhorn",
+      timeout : 2000
+    });
   });
 }
 
 
 function deleteBtn(dataId){
 
-  var data = {
-    supplierId : dataId
-  }
 
-  smart.dopost("/api/supplier/delete.json",data ,function(err,result){
+  $.SmartMessageBox({
+    title : "确认",
+    content : "是否删除",
+    buttons : "[取消],[确认]"
+  }, function(ButtonPress, value) {
 
-    smart.paginationInitalized = false;
-    $("#pagination_area").html("");
-    render(0, count);
+    if (ButtonPress == "确认") {
+
+
+      var filter = {
+        _id : dataId
+      }
+
+      smart.dodelete("/supplier/remove",{
+        filter: filter
+      } ,function(err,result){
+
+        if (err) {
+
+          $.smallBox({
+            title : "提示",
+            content : "系统错误",
+            color : "#a90329",
+            iconSmall : "fa fa-bullhorn",
+            timeout : 2000
+          });
+          return ;
+        }
+
+        $.smallBox({
+          title : "提示",
+          content : "删除成功",
+          color : "#739E73",
+          iconSmall : "fa fa-bullhorn",
+          timeout : 2000
+        });
+
+        smart.paginationInitalized = false;
+        $("#pagination_area").html("");
+        render(0, count);
+
+      });
+    }
   });
+
 }
 function updateBtn(dataId) {
 
   $('#supplierAddModal').modal('show');
   $('#addBtn').html("修改");
-  smart.doget("/api/supplier/get.json?supplierId=" + dataId ,function(err,result){
 
-    $("#supplierId").val(result._id);
-    $("#supplierNum").val(result.supplierNum);
-    $("#supplierName").val(result.supplierName);
-    $("#supplierScale").val(result.supplierPhone);
+  $("#supplierId").val("");
+  $("#supplierNum").val("");
+  $("#supplierName").val("");
+  $("#supplierPhone").val("");
+
+  smart.doget("/supplier/get?_id=" + dataId ,function(err,result){
+    var obj = result.items[0];
+
+    $("#supplierId").val(obj._id);
+    $("#supplierNum").val(obj.supplierNum);
+    $("#supplierName").val(obj.supplierName);
+    $("#supplierPhone").val(obj.supplierPhone);
   });
 }
 
@@ -77,9 +160,9 @@ function event() {
 
 function render(start, count,keyword) {
 
-  var jsonUrl = "/api/supplier/list.json?";
-  jsonUrl += "start=" + start;
-  jsonUrl += "&count=" + count;
+  var jsonUrl = "/supplier/list?";
+  jsonUrl += "skip=" + start;
+  jsonUrl += "&limit=" + count;
 
   if(keyword){
     keyword = keyword ? encodeURIComponent(keyword) : "";
@@ -105,9 +188,9 @@ function render(start, count,keyword) {
         supplierNum   : row.supplierNum   ,
         supplierName  : row.supplierName  ,
         supplierPhone : row.supplierPhone  ,
-        createat : smart.date(row.createat) ,
+        createat : smart.date(row.createAt) ,
         userName :"浩",
-        editat : smart.date(row.editat),
+        editat : smart.date(row.updateAt),
         createby : row.createby
       }));
     });

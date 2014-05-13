@@ -7,6 +7,33 @@ var response  = smart.framework.response
   , product   = require('../controllers/ctrl_product');
 
 
+exports.removeProduct = function(req, res) {
+
+  var handler = new context().bind(req, res);
+
+  product.remove(handler , function(err, result) {
+    response.send(res, err, result);
+  });
+}
+
+exports.updateProduct = function(req, res) {
+
+  var handler = new context().bind(req, res);
+
+  product.update(handler , function(err, result) {
+    response.send(res, err, result);
+  });
+}
+
+exports.getProduct = function(req, res) {
+
+  var handler = new context().bind(req, res);
+
+  product.get(handler , function(err, result) {
+    response.send(res, err, result);
+  });
+};
+
 // 获取App  的台位 一览
 exports.productList = function(req, res) {
 

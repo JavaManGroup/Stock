@@ -6,7 +6,29 @@ var response  = smart.framework.response
   , _         = smart.util.underscore
   , stock   = require('../controllers/ctrl_stock');
 
+exports.updateStock = function (req, res) {
 
+  var handler = new context().bind(req, res);
+  stock.updateStock(handler, function (err, result) {
+    response.send(res, err, result);
+  });
+};
+
+exports.addTakeDetail = function (req, res) {
+
+  var handler = new context().bind(req, res);
+  stock.addTakeDetail(handler, function (err, result) {
+    response.send(res, err, result);
+  });
+};
+
+exports.updateTakeValue = function (req, res) {
+
+  var handler = new context().bind(req, res);
+  stock.updateTakeValue(handler, function (err, result) {
+    response.send(res, err, result);
+  });
+};
 
 exports.getTakeDetailList = function (req, res) {
 
@@ -55,6 +77,14 @@ exports.addStock = function(req, res) {
 
   var handler = new context().bind(req, res);
   stock.addStock(handler ,function(err ,result) {
+    response.send(res, err, result);
+  });
+};
+
+exports.removeStock = function (req, res) {
+
+  var handler = new context().bind(req, res);
+  stock.removeStock(handler ,function(err ,result) {
     response.send(res, err, result);
   });
 };

@@ -5,6 +5,8 @@ var util    = require("../core/utils")
   , context = smart.framework.context
   , log   = smart.framework.log;
 
+var product = require("../controllers/ctrl_product");
+
 exports.guiding = function (app) {
 
   app.get("/", function (req, res) {
@@ -27,7 +29,30 @@ exports.guiding = function (app) {
     user.simpleLogin(req, res);
   });
 
+  //plan
+  app.get("/ajax/plan/detail", function (req, res) {
+    var handler = new context().bind(req, res);
+    var historyId = req.query.historyId;
+    res.render("plan_detail", {"title": __(handler, "采购详细"), "historyId": historyId});
+  });
 
+  app.get("/ajax/plan/history", function (req, res) {
+    var handler = new context().bind(req, res);
+    res.render("plan_history", {"title": __(handler, "采购历史")});
+  });
+
+  app.get("/ajax/plan/today", function (req, res) {
+    var handler = new context().bind(req, res);
+    res.render("plan_today", {"title": __(handler, "今日采购")});
+  });
+
+  app.get("/ajax/plan/list", function (req, res) {
+    var handler = new context().bind(req, res);
+
+    res.render("plan_list", {"title": __(handler, "采购目录")});
+  });
+
+  //take
   app.get("/ajax/take/detail", function (req, res) {
     var handler = new context().bind(req, res);
     var type = req.query.type;
@@ -44,7 +69,11 @@ exports.guiding = function (app) {
   app.get("/ajax/taking", function (req, res) {
     var handler = new context().bind(req, res);
     var type = req.query.type;
-    res.render("take_list", {"title": __(handler, "盘点") , "type":type});
+    handler.addParams("start",0);
+    handler.addParams("count",Number.MAX_VALUE);
+    product.list(handler,function(err,result) {
+      res.render("take_list", {"title": __(handler, "盘点") , "type":type , "productList" : result.items});
+    })
   });
 
 
@@ -80,8 +109,8 @@ exports.guiding = function (app) {
 
   app.get("/ajax/product/add", function (req, res) {
     var handler = new context().bind(req, res);
-    console.log("dddddddddddddddddddddddddddd");
-    res.render("product_add", {"title": __(handler, "产品列表")});
+    var id = req.query.id || "";
+    res.render("product_add", {"title": __(handler, "产品列表"), productId: id });
   });
 
 
@@ -96,11 +125,6 @@ exports.guiding = function (app) {
 
   app.get("/error/500", function (req, res) {
     res.render("error_500",{user: req.session.user});
-  });
-
-  // ----------------------------------
-  app.get("*", function (req, res) {
-    res.send("404");
   });
 };
 

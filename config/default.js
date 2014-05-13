@@ -1,9 +1,9 @@
 module.exports = {
   "db": {
 //      "host": "219.127.220.106"
-    "host": "115.28.210.254"
+      "host": "115.28.210.254"
     , "port": 27017
-    , "dbname": "diandian"
+    , "dbname": "ziwei"
     , "prefix": ""
     , "schema": {
       "User": "Users"
@@ -111,5 +111,11 @@ module.exports = {
       , "maxConnections"    : 1
       , "connectionTimeout" : 0 // 0 = Disabled
     }
+  },
+  "setting" : {
+    day : 1 ,
+    mounth : ["11"] ,
+    quarter : ["02-01","05-01","08-01","11-01"],
+    year : ["12-31"]
   }
 }

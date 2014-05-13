@@ -115,10 +115,6 @@
               <li>
                 <a href="ajax/stock">盘点目录</a>
               </li>
-              <li>
-                <a href="ajax/buy_list.html">采购目录</a>
-              </li>
-
             </ul>
 					</li>
 
@@ -144,31 +140,24 @@
 					</li>
 					<li>
 						<a href="#"><i class="fa fa-lg fa-fw fa-desktop"></i> <span class="menu-item-parent">采购计划</span></a>
-						<ul>
-                            <li>
-                                <a href="ajax/plan.html">本期采购计划</a>
-                            </li>
-                            <li>
-                                <a href="ajax/plan-history.html">历史采购计划</a>
-                            </li>
-                            <li>
-                                <a href="ajax/plan-history-detail.html">历史计划详细</a>
-                            </li>
-						</ul>
+            <ul>
+              <li>
+                <a href="ajax/plan/history">历史采购计划</a>
+              </li>
+            </ul>
 					</li>
+          <li style="display: none;">
+            <a href="#"><i class="fa fa-lg fa-fw fa-bar-chart-o"></i> <span class="menu-item-parent">收获管理</span></a>
+            <ul>
 
-                    <li>
-                        <a href="#"><i class="fa fa-lg fa-fw fa-bar-chart-o"></i> <span class="menu-item-parent">收获管理</span></a>
-                        <ul>
-
-                            <li>
-                                <a href="ajax/purchase-add.html">采购录入</a>
-                            </li>
-                            <li>
-                                <a href="ajax/purchase.html">采购记录</a>
-                            </li>
-                        </ul>
-                    </li>
+              <li>
+                <a href="ajax/purchase-add.html">采购录入</a>
+              </li>
+              <li>
+                <a href="ajax/purchase.html">采购记录</a>
+              </li>
+            </ul>
+          </li>
 				</ul>
 			</nav>
 			<span class="minifyme"> <i class="fa fa-arrow-circle-left hit"></i> </span>
@@ -311,9 +300,7 @@
 
 		<![endif]-->
 
-
-
-
+    <script src="/vendor/async/async.min.js"></script>
     <script src="vendor/underscore/underscore-min-1.5.1.js"></script>
     <script src="js/diandian.js"></script>
 		<!-- Demo purpose only -->

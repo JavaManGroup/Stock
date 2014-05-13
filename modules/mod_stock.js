@@ -15,8 +15,11 @@ var mongo       = smart.util.mongoose
  * @type {schema}
  */
 var Stock = new schema({
+
     productId       :   { type: String, description: "编号" , index :true }
+  , productNId      :   { type: String, description: "编号" , index :true }
   , amount          :   { type: Number, description: "编号" }
+  , lower           :   { type: Number, description: "下限" }
   , num             :   { type: Number, description: "编号" }
   , type            :   { type: String, description: "盘点类型  1 日盘 2  月盘  3 季盘  4" }
   , valid           :   { type: Number, description: "产品名称" , default:1 }
@@ -79,6 +82,15 @@ exports.update = function(code, stockId, newStock, callback) {
  * @param {string} itemId 菜品ID
  * @param {function} callback 返回指定菜品
  */
+exports.getByProductId = function(code, productId, callback) {
+
+  var stock = model(code);
+
+  stock.findOne({productId: productId}, function(err, result) {
+    callback(err, result);
+  });
+};
+
 exports.get = function(code, stockId, callback) {
 
   var stock = model(code);
