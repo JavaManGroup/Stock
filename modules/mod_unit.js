@@ -15,15 +15,15 @@ var mongo       = smart.util.mongoose
  * @type {schema}
  */
 var Unit = new schema({
-    unitNum                  :   { type: String, description: "编号"}
-  , unitName                 :   { type: String, description: "名称"}
-  , unitRadix                :   { type: String, description: "基数"}
-  , unitScale                :   { type: String, description: "换算"}
-  , valid                :   { type: Number, description: "产品名称" , default:1}
-  , createat             :   { type: Date,   description: "创建时间" }
-  , createby             :   { type: String, description: "创建者" }
-  , editat               :   { type: Date,   description: "最终修改时间" }
-  , editby               :   { type: String, description: "最终修改者" }
+    unitNum     :   { type: String, description: "编号"}
+  , unitName    :   { type: String, description: "名称"}
+  , unitRadix   :   { type: String, description: "基数"}
+  , unitScale   :   { type: String, description: "换算"}
+  , valid       :   { type: Number, description: "产品名称" , default:1}
+  , createat    :   { type: Date,   description: "创建时间" }
+  , createby    :   { type: String, description: "创建者" }
+  , editat      :   { type: Date,   description: "最终修改时间" }
+  , editby      :   { type: String, description: "最终修改者" }
 });
 
 /**

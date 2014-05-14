@@ -1,0 +1,266 @@
+<input type="hidden" id="_csrf" name="_csrf" value="<%= csrftoken %>" />
+
+
+<div class="row">
+  <div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
+    <h1 class="page-title txt-color-blueDark">
+      <i class="fa fa-table fa-fw "></i>
+      产品管理
+			<span>> 
+				采购目录
+			</span>
+    </h1>
+  </div>
+</div>
+
+<!-- widget grid -->
+<section id="widget-grid" class="">
+
+<!-- row -->
+<div class="row">
+
+  <!-- NEW WIDGET START -->
+  <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+
+    <!-- Widget ID (each widget will need unique ID)-->
+    <div class="jarviswidget jarviswidget-color-darken" id="wid-id-1" data-widget-editbutton="false"
+         data-widget-colorbutton="false"
+         data-widget-editbutton="false"
+         data-widget-togglebutton="false"
+         data-widget-deletebutton="false"
+         data-widget-fullscreenbutton="false"
+         data-widget-custombutton="false"
+         data-widget-sortable="false">
+      <!-- widget options:
+      usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false">
+
+
+
+      -->
+      <header>
+        <span class="widget-icon"> <i class="fa fa-table"></i> </span>
+        <h2>采购目录</h2>
+      </header>
+
+      <!-- widget div-->
+      <div>
+
+        <!-- widget edit box -->
+        <div class="jarviswidget-editbox">
+          <!-- This area used as dropdown edit box -->
+
+        </div>
+        <!-- end widget edit box -->
+
+        <!-- widget content -->
+        <div class="widget-body no-padding">
+          <table class="table table-bordered table-striped table-hover">
+            <thead>
+            <tr>
+              <th>序号</th>
+              <th>编号</th>
+              <th>名称</th>
+              <th>类别</th>
+              <th>库房</th>
+              <th>当前数量</th>
+              <th>单位</th>
+              <th>价格</th>
+              <th>创建者</th>
+              <th>创建时间</th>
+              <th>更新时间</th>
+              <th>操作</th>
+            </tr>
+            </thead>
+            <tbody id="list"></tbody>
+          </table>
+
+        </div>
+        <!-- end widget content -->
+
+      </div>
+      <!-- end widget div -->
+
+    </div>
+    <!-- end widget -->
+
+  </article>
+  <!-- WIDGET END -->
+
+</div>
+
+<!-- end row -->
+<div class="row">
+  <div class="col-lg-12">
+
+    <button type="button" class="btn btn-default pull-right" onclick="window.history.back();" style="margin: 10px 0 0 5px;">
+      返回
+    </button>
+
+    <button type="submit" class="btn btn-primary pull-right" style="margin: 10px 0 0 5px;" onclick="addView();">
+      追加
+    </button>
+
+  </div>
+</div>
+
+<!-- row -->
+
+
+<!-- end row -->
+
+</section>
+<!-- end widget grid -->
+
+<script type="text/template" id="tmpl_list">
+  <tr>
+    <td>{{index}}</td>
+    <td>{{productSN}}</td>
+    <td>{{productName}}</td>
+    <td>{{productCategory}}</td>
+    <td>{{productRoom}}</td>
+    <td>{{amount}}</td>
+    <td>{{productUnit}}</td>
+    <td>{{productPrice}}</td>
+    <td>{{userName}}</td>
+    <td>{{createat}}</td>
+    <td>{{editat}}</td>
+    <td><a class="btn btn-danger btn-sm" href="javascript:void(0);" onclick="removePlan('{{id}}')">删除</a></td>
+  </tr>
+</script>
+
+<script type="text/javascript" src="/javascripts/plan_list.js"></script>
+
+<script type="text/javascript">
+  // DO NOT REMOVE : GLOBAL FUNCTIONS!
+  pageSetUp();
+  // PAGE RELATED SCRIPTS
+  var start = 0;
+  var count = 10;
+  var keyword = "";
+
+
+  function initialize() {
+
+    smart.paginationInitalized = false;
+    $("#pagination_area").html("");
+    render(start,count,keyword);
+    event();
+  }
+</script>
+
+<!-- Modal -->
+<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+          &times;
+        </button>
+        <h4 class="modal-title" id="myModalLabel">追加分类</h4>
+      </div>
+      <div class="modal-body">
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group" id="category_list" style="height: 300px;overflow-y: scroll;">
+              <table class="table table-bordered table-striped table-condensed table-hover smart-form" style="width: 95%">
+                <thead>
+                <tr>
+                  <th>分类名称</th>
+                  <th>产品数量</th>
+                </tr>
+                </thead>
+                <tbody id="category_body"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group" id="product_list" style="height: 300px; overflow-y: scroll;">
+              <table class="table table-bordered table-striped table-condensed table-hover smart-form has-tickbox">
+                <thead>
+                <tr>
+                  <th>
+                    <label class="checkbox">
+                      <input type="checkbox" name="checkbox-inline">
+                      <i></i>
+                    </label>
+                  </th>
+                  <th>编号</th>
+                  <th>名称</th>
+                  <th>库房</th>
+                </tr>
+                </thead>
+                <tbody id="product_body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12" style="height: 200px;overflow-y: scroll;">
+            <table class="table table-bordered table-striped table-condensed table-hover smart-form">
+              <thead>
+              <tr>
+                <th>序号</th>
+                <th>编号</th>
+                <th>产品名称</th>
+                <th>类型</th>
+                <th>库房</th>
+                <th>操作</th>
+              </tr>
+              </thead>
+              <tbody id="has_product_body"></tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">
+          取消
+        </button>
+        <button type="button" class="btn btn-primary" onclick="add();">
+          添加
+        </button>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+
+
+<script type="text/template" id="tmpl_category_tr">
+  <tr onclick="clickCategory('{{id}}');">
+    <th>{{name}}</th>
+    <th>{{amount}}</th>
+  </tr>
+</script>
+
+
+<script type="text/template" id="tmpl_product_tr">
+  <tr>
+    <td>
+      <label class="checkbox">
+        <input type="checkbox" name="checkbox-inline" value="{{id}}" onclick="checkProduct(this)">
+        <i></i>
+      </label>
+    </td>
+    <td>{{sn}}</td>
+    <td>{{name}}</td>
+    <td>{{roomName}}</td>
+  </tr>
+</script>
+
+<script type="text/template" id="tmpl_has_product_tr">
+  <tr>
+    <td>{{index}}</td>
+    <td>{{sn}}</td>
+    <td>{{name}}</td>
+    <td>{{categoryName}}</td>
+    <td>{{roomName}}</td>
+    <td><a class="btn btn-danger btn-xs" href="javascript:void(0);" onclick="removeProduct('{{id}}')">删除</a></td>
+  </tr>
+</script>

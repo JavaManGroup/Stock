@@ -1172,8 +1172,9 @@ function checkURL() {
 		//console.log("page title: " + document.title);
 
 		// parse url to jquery
-    console.log(url)
-    console.log(container)
+    console.log(url);
+    console.log(container);
+
 
 		loadURL(url, container);
 	} else {
@@ -1226,6 +1227,13 @@ function loadURL(url, container) {
 		},*/
 		success : function(data) {
 			// cog replaced here...
+
+      if (data == "401") {
+
+        alert("未登录,自动跳转到登录界面。");
+        window.location.href = "/login";
+        return;
+      }
 
 			container.css({
 				opacity : '0.0'

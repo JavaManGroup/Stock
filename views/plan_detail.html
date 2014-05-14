@@ -1,0 +1,331 @@
+<input type="hidden" id="_csrf" name="_csrf" value="<%= csrftoken %>" />
+<input type="hidden" id="historyId" name="historyId" value="<%= historyId %>" />
+
+<div class="row">
+  <div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
+    <h1 class="page-title txt-color-blueDark">
+      <i class="fa fa-table fa-fw "></i>
+      产品管理
+			<span>>
+				采购计划
+			</span>
+    </h1>
+  </div>
+</div>
+
+<!-- widget grid -->
+<section id="widget-grid" class="">
+
+  <div class="row" style="margin-bottom: 10px;">
+
+    <article class="col-xs-12 col-sm-12 col-md-12 col-lg-3">
+      <div class="btn-group btn-group-justified">
+        <span id="historyDate">*</span> 品数：<span id="historyTotal">*</span>个
+      </div>
+    </article>
+
+    <article class="col-xs-12 col-sm-12 col-md-12 col-lg-4">
+    </article>
+
+    <article class="col-xs-12 col-sm-12 col-md-12 col-lg-1">
+    </article>
+    <article class="col-xs-12 col-sm-12 col-md-12 col-lg-1">
+    </article>
+    <article class="col-xs-12 col-sm-12 col-md-12 col-lg-1" style="display: none;">
+      <input placeholder="关键字" class="form-control" />
+    </article>
+    <article class="col-xs-12 col-sm-12 col-md-12 col-lg-1" style="display: none;">
+      <input placeholder="商家" class="form-control" />
+    </article>
+    <article class="col-xs-12 col-sm-12 col-md-12 col-lg-1" style="display: none;">
+      <div class="btn-group">
+        <button type="button" class="btn btn-default pull-right" onclick="javascript:void(0);" >
+          搜索
+        </button>
+      </div>
+    </article>
+  </div>
+
+  <div class="row" style="margin-bottom: 20px;">
+    <div class="col-lg-12">
+      <button type="submit" id="cancelBtn" class="btn btn-primary pull-right" style="margin: 10px 0 0 5px;" onclick="javascript:cancelDetail();">
+        取下
+      </button>
+
+      <button type="submit" id="saveDetailBtn" class="btn btn-primary pull-right" style="margin: 10px 0 0 5px;" onclick="javascript:saveDetail();">
+        提交&amp;保存
+      </button>
+
+      <button type="submit" id="addDetailBtn" class="btn btn-primary pull-right" style="margin: 10px 0 0 5px;" onclick="javascript:addView();">
+        添加
+      </button>
+    </div>
+  </div>
+  <!-- row -->
+  <div class="row">
+
+    <!-- NEW WIDGET START -->
+    <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+      <!-- Widget ID (each widget will need unique ID)-->
+      <div class="jarviswidget jarviswidget-color-darken" id="wid-id-1" data-widget-editbutton="false"
+           data-widget-colorbutton="false"
+           data-widget-editbutton="false"
+           data-widget-togglebutton="false"
+           data-widget-deletebutton="false"
+           data-widget-fullscreenbutton="false"
+           data-widget-custombutton="false"
+           data-widget-collapsed="false"
+           data-widget-sortable="false">
+        <!-- widget options:
+        usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false">
+        -->
+
+        <header>
+          <span class="widget-icon"> <i class="fa fa-table"></i> </span>
+
+          <h2 id="listTitle">采购计划列表</h2>
+        </header>
+
+        <!-- widget div-->
+        <div>
+
+          <!-- widget edit box -->
+          <div class="jarviswidget-editbox">
+            <!-- This area used as dropdown edit box -->
+
+          </div>
+          <!-- end widget edit box -->
+
+          <!-- widget content -->
+          <div class="widget-body no-padding">
+            <table class="table table-bordered table-striped table-hover">
+              <thead>
+              <tr>
+                <th width="80">序号</th>
+                <th>名称</th>
+                <th>商家</th>
+                <th>商家电话</th>
+                <th width="80">库房</th>
+                <th width="80">单位</th>
+                <th width="80">单价</th>
+                <th width="120">计划购入数量</th>
+                <th width="190">创建时间</th>
+                <th width="190">更新时间</th>
+                <th>操作</th>
+              </tr>
+              </thead>
+              <tbody id="list"></tbody>
+            </table>
+
+          </div>
+          <!-- end widget content -->
+
+        </div>
+        <!-- end widget div -->
+
+      </div>
+      <!-- end widget -->
+
+    </article>
+    <!-- WIDGET END -->
+
+  </div>
+  <!-- end row -->
+  <div class="row">
+
+    <div class="col-lg-10" id="pagination_area">
+
+    </div>
+  </div>
+
+
+
+</section>
+<!-- end widget grid -->
+
+
+<script type="text/template" id="tmpl_product_list">
+  <tr>
+    <td>{{index}}</td>
+    <td>{{productSN}}</td>
+    <td>{{productName}}</td>
+    <td>{{category}}</td>
+    <td>{{room}}</td>
+    <td>{{unit}}</td>
+    <td>{{originalAmount}}</td>
+    <td>{{stockLower}}</td>
+    <td>{{stockDiff}}</td>
+    <td>{{productPrice}}</td>
+    <td><a class="btn btn-primary btn-xs" href="javascript:void(0);" onclick="selectBtn('{{id}}')">选择</a></td>
+  </tr>
+</script>
+
+<!-- Modal -->
+<div class="modal fade" id="selectModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+          &times;
+        </button>
+        <h4 class="modal-title">产品列表</h4>
+      </div>
+      <div class="modal-body">
+
+        <div class="row">
+          <div class="col-md-12" id="popup_product_list">
+            <table class="table table-bordered table-striped table-hover">
+              <thead>
+              <tr>
+                <th>序号</th>
+                <th>编号</th>
+                <th>名称</th>
+                <th>类别</th>
+                <th>库房</th>
+                <th>单位</th>
+                <th>当前数量</th>
+                <th>库存阀值</th>
+                <th>缺值</th>
+                <th>价格</th>
+                <th>操作</th>
+              </tr>
+              </thead>
+              <tbody id="product_list"></tbody>
+            </table>
+
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12" id="popup_pagination_area"></div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+
+        <button type="button" class="btn btn-default" data-dismiss="modal">
+          取消
+        </button>
+        <button type="button" class="btn btn-primary">
+          添加
+        </button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+          &times;
+        </button>
+        <h4 class="modal-title" id="myModalLabel">追加单位</h4>
+      </div>
+      <div class="modal-body">
+
+        <div class="row">
+          <div class="col-md-12">
+            <div class="form-group">
+              <input type="text" class="form-control" placeholder="编号" required />
+            </div>
+
+            <div class="form-group">
+              <input type="text" class="form-control" placeholder="名称" required />
+            </div>
+
+            <div class="form-group">
+              <input type="text" class="form-control" placeholder="基数" required />
+            </div>
+
+            <div class="form-group">
+              <input type="text" class="form-control" placeholder="换算" required />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">
+          取消
+        </button>
+        <button type="button" class="btn btn-primary">
+          添加
+        </button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<!-- Modal -->
+<div class="modal fade" id="buyModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+          &times;
+        </button>
+        <h4 class="modal-title" id="buyModalLabel">个数</h4>
+      </div>
+      <div class="modal-body">
+
+        <div class="row">
+          <div class="col-md-12">
+            <div class="form-group">
+              <input type="text" class="form-control" placeholder="数量" required />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">
+          取消
+        </button>
+        <button type="button" class="btn btn-primary">
+          添加
+        </button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<script type="text/template" id="tmpl_list">
+  <tr>
+    <td>{{index}}</td>
+    <td>{{productName}}</td>
+    <td>{{supplier}}</td>
+    <td>{{supplierPhone}}</td>
+    <td>{{room}}</td>
+    <td>{{unit}}</td>
+    <td>{{productPrice}}</td>
+    <td>{{planAmount}}</td>
+    <td>{{createat}}</td>
+    <td>{{editat}}</td>
+    <td>
+      <a class="btn btn-primary btn-sm action" href="javascript:void(0);" onclick="editAmount('{{id}}');">修改</a>
+      <a class="btn btn-danger btn-sm action" href="javascript:void(0);" onclick="removePlanDetail('{{id}}')">删除</a>
+    </td>
+  </tr>
+</script>
+
+
+<script type="text/javascript" src="/javascripts/plan_history_detail.js"></script>
+
+<script type="text/javascript">
+  // DO NOT REMOVE : GLOBAL FUNCTIONS!
+  pageSetUp();
+  // PAGE RELATED SCRIPTS
+
+  var start = 0;
+  var count = 10;
+  var keyword = "";
+
+  function initialize() {
+
+    smart.paginationInitalized = false;
+    $("#pagination_area").html("");
+    render(start,count,keyword);
+  }
+</script>

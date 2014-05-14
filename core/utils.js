@@ -14,11 +14,18 @@ var _         = smart.util.underscore
 
 
 exports.authenticate = function(req, res, next) {
+
   try {
     middleware.authenticate(req, res, next);
   } catch (e) {
 
+    if (e.code == 401 && util.isBrowser(req) && req.url.indexOf("ajax")) {
+
+      return res.send("401");
+    }
+
     if (e.code == 401 && util.isBrowser(req)) { // UnauthorizedError
+
       return res.redirect("/");  //
     }
 

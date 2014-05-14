@@ -24,104 +24,147 @@ function add() {
     unitScale : unitScale
   };
 
-  if (unitId) {
-    data.unitId = unitId;
-    smart.dopost("/api/unit/update.json",data ,function(err,result){
+  if (unitNum.length == 0 || unitName.length == 0 || unitRadix.length == 0 || unitScale.length == 0) {
 
-      render(0, count);
-      $("#unitId").val('');
-      $('#unitAddModal').modal('hide')
+    $.smallBox({
+      title : "提示",
+      content : "请检查输入的内容",
+      color : "#a90329",
+      iconSmall : "fa fa-bullhorn",
+      timeout : 2000
     });
     return;
   }
 
-  $("#unitName").val("");
-  smart.dopost("/api/unit/add.json",data ,function(err,result){
-
-    smart.paginationInitalized = false;
-    $("#pagination_area").html("");
-    render(0, count);
-    $('#unitAddModal').modal('hide')
-  });
-}
-
-
-function deleteBtn(dataId){
-
-  var data = {
-    unitId : dataId
+  var filter = {
+    _id : unitId
   }
 
-  smart.dopost("/api/unit/delete.json",data ,function(err,result){
+  if (unitId) {
+
+    return smart.doput("/unit/update",{
+      filter: filter,
+      data : data
+    }, function (e, result) {
+
+      if (smart.error(e || result.systemError, result.systemError || "", true)) {
+        return;
+      }
+
+      render(0, count);
+      $("#unitId").val('');
+      $('#unitAddModal').modal('hide')
+
+      $.smallBox({
+        title: "提示",
+        content: "修改成功",
+        color: "#739E73",
+        iconSmall: "fa fa-bullhorn",
+        timeout: 2000
+      });
+    });
+  }
+
+  $("#unitName").val("");
+  smart.dopost("/unit/add",{data:data} ,function(e,result){
+
+    if (smart.error(e || result.systemError, result.systemError || "", true)) {
+      return;
+    }
 
     smart.paginationInitalized = false;
     $("#pagination_area").html("");
     render(0, count);
+    $('#unitAddModal').modal('hide');
+
+    $.smallBox({
+      title: "提示",
+      content: "添加成功",
+      color: "#739E73",
+      iconSmall: "fa fa-bullhorn",
+      timeout: 2000
+    });
   });
 }
+
+
+function deleteBtn(dataId) {
+
+  $.SmartMessageBox({
+    title : "确认",
+    content : "是否删除",
+    buttons : "[取消],[确认]"
+  }, function(ButtonPress, value) {
+
+    if (ButtonPress == "确认") {
+
+      var filter = {
+        _id: dataId
+      }
+
+      smart.dodelete("/unit/remove", {
+        filter: filter
+      }, function (e, result) {
+
+        if (smart.error(e || result.systemError, result.systemError || "", true)) {
+          return;
+        }
+
+        $.smallBox({
+          title : "提示",
+          content : "删除成功",
+          color : "#739E73",
+          iconSmall : "fa fa-bullhorn",
+          timeout : 2000
+        });
+
+        smart.paginationInitalized = false;
+        $("#pagination_area").html("");
+        render(0, count);
+      });
+    }
+  });
+}
+
 function updateBtn(dataId) {
 
   $('#unitAddModal').modal('show');
-  $('#addBtn').html("修改");
-  smart.doget("/api/unit/get.json?unitId=" + dataId ,function(err,result){
 
-    $("#unitId").val(result._id);
-    $("#unitNum").val(result.unitNum);
-    $("#unitName").val(result.unitName);
-    $("#unitRadix").val(result.unitRadix);
-    $("#unitScale").val(result.unitScale);
+  $('#addBtn').html("修改");
+  $("#unitId").val("");
+  $("#unitNum").val("");
+  $("#unitName").val("");
+  $("#unitRadix").val("");
+  $("#unitScale").val("");
+
+  smart.doget("/unit/get?_id=" + dataId ,function(err,result){
+
+    var obj = result.items[0];
+
+    $("#unitId").val(obj._id);
+    $("#unitNum").val(obj.unitNum);
+    $("#unitName").val(obj.unitName);
+    $("#unitRadix").val(obj.unitRadix);
+    $("#unitScale").val(obj.unitScale);
   });
 }
 
 function event(){
-  $("#categoryAddBtn").click(function(){
-
-    var categoryName = $("#categoryName").val();
-    var categoryId = $("#categoryId").val();
-    var data = {
-      categoryName : categoryName
-    };
-
-    if(categoryId) {
-      data.categoryId = categoryId;
-      smart.dopost("/api/category/update.json",data ,function(err,result){
-
-        render(0, count);
-        $("#categoryId").val('');
-        $('#categoryAddModal').modal('hide')
-      });
-      return;
-    }
-
-    $("#categoryName").val("");
-    smart.dopost("/api/category/add.json",data ,function(err,result){
-
-      var url = "ajax/category";
-      var container = $('#content');
-
-      smart.paginationInitalized = false;
-      $("#pagination_area").html("");
-      render(0, count);
-      $('#categoryAddModal').modal('hide')
-    });
-  });
-
-  $(".categoryUpdateBtn a").click(function(e){
-
-  });
 }
 
 function render(start, count,keyword) {
 
-  var jsonUrl = "/api/unit/list.json?";
-  jsonUrl += "start=" + start;
-  jsonUrl += "&count=" + count;
+  var jsonUrl = "/unit/list?";
+  jsonUrl += "skip=" + start;
+  jsonUrl += "&limit=" + count;
 
-  if(keyword){
+  if (keyword) {
+
     keyword = keyword ? encodeURIComponent(keyword) : "";
     jsonUrl += "&keyword=" + keyword;
   }
-  smart.doget(jsonUrl, function(e, result){
+
+  smart.doget(jsonUrl, function (e, result) {
 
     if (smart.error(e, "", true)) {
       return;
@@ -138,16 +181,17 @@ function render(start, count,keyword) {
     _.each(list, function(row){
 
       container.append(_.template(tmpl, {
-        index : index ++ ,
-        unitId    : row._id ,
-        unitNum   : row.unitNum   ,
-        unitName  : row.unitName  ,
-        unitRadix : row.unitRadix ,
-        unitScale : row.unitScale ,
-        createat : smart.date(row.createat) ,
-        userName :"浩",
-        editat : smart.date(row.editat),
-        createby : row.createby
+
+        index: index++,
+        unitId: row._id,
+        unitNum: row.unitNum,
+        unitName: row.unitName,
+        unitRadix: row.unitRadix,
+        unitScale: row.unitScale,
+        createat: smart.date(row.createat),
+        userName: result.options.user[row.createBy].first,
+        editat: smart.date(row.editat),
+        createby: row.createby
       }));
     });
 
@@ -161,7 +205,6 @@ function render(start, count,keyword) {
       render(active,count);
     });
   });
-
 }
 
 

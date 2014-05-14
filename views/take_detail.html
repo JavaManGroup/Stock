@@ -1,0 +1,273 @@
+<input type="hidden" id="_csrf" name="_csrf" value="<%= csrftoken %>" />
+<input type="hidden" id="takeId" name="takeId" value="<%= takeId %>" />
+
+
+<div class="row">
+  <div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
+    <h1 class="page-title txt-color-blueDark">
+      <i class="fa fa-table fa-fw "></i>
+      盘点管理
+			<span>> 
+				本期盘点
+			</span>
+    </h1>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-12">
+    <div style="border-color: gray;background-color: #FFFFFF;margin-bottom: 20px; padding: 5px" id="categoryList">
+      <table>
+        <tbody>
+        <tr class="row  bound-top">
+          <td class="row-hd" style="width: 100px;vertical-align: top;">
+            <div class="col-lg-12">
+              分类
+            </div>
+          </td>
+          <td class="row-bd">
+            <div class="col-lg-12" id="category_list">
+            </div>
+          </td>
+        </tr>
+
+        <tr class="row  bound-bottom">
+          <td class="row-hd">
+            <div class="col-lg-12" style="vertical-align: top;">
+              特殊情况
+            </div>
+          </td>
+          <td class="row-bd">
+            <div class="col-lg-12">
+              <p style="float: left; margin-right: 20px;"><input type="radio" name="filter" value="0" onclick="onFilter(0)" checked>全部</p>
+              <p style="float: left; margin-right: 20px;"><input type="radio" name="filter" value="1" onclick="onFilter(1)">数量不符合</p>
+              <p style="float: left; margin-right: 20px;"><input type="radio" name="filter" value="2" onclick="onFilter(2)">有修改</p>
+              <p style="float: left; margin-right: 20px;"><input type="radio" name="filter" value="3" onclick="onFilter(3)">有备注</p>
+            </div>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- widget grid -->
+<section id="widget-grid" class="">
+
+  <!-- row -->
+  <div class="row" style="margin-bottom: 10px; display: none;">
+
+    <article class="col-xs-12 col-sm-12 col-md-12 col-lg-10">
+    </article>
+
+    <article class="col-xs-12 col-sm-12 col-md-12 col-lg-2">
+
+      <a class="btn btn-danger pull-right" href="javascript:void(0);">取下</a>
+      <a class="btn btn-success pull-right" href="javascript:void(0);" style="margin-right: 10px;"><i class="fa fa-check"></i>审核</a>
+
+    </article>
+
+  </div>
+
+  <div class="row">
+
+    <!-- NEW WIDGET START -->
+    <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+      <!-- Widget ID (each widget will need unique ID)-->
+      <div class="jarviswidget jarviswidget-color-darken" id="wid-id-1" data-widget-editbutton="false"
+           data-widget-colorbutton="false"
+           data-widget-editbutton="false"
+           data-widget-togglebutton="false"
+           data-widget-deletebutton="false"
+           data-widget-fullscreenbutton="false"
+           data-widget-custombutton="false"
+           data-widget-collapsed="false"
+           data-widget-sortable="false">
+        <!-- widget options:
+        usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false">
+        -->
+
+        <header>
+          <span class="widget-icon"> <i class="fa fa-table"></i> </span>
+
+          <h2>本期盘点</h2>
+        </header>
+
+        <!-- widget div-->
+        <div>
+
+          <!-- widget edit box -->
+          <div class="jarviswidget-editbox">
+            <!-- This area used as dropdown edit box -->
+          </div>
+          <!-- end widget edit box -->
+
+          <!-- widget content -->
+          <div class="widget-body no-padding">
+
+            <table class="table table-bordered table-striped table-hover">
+              <thead>
+              <tr>
+                <th>序号</th>
+                <th>编号</th>
+                <th>名称</th>
+                <th>单位</th>
+                <th>类型</th>
+                <th>原数</th>
+                <th>盘点数量</th>
+                <th>调整后数量</th>
+                <th width="150">备注</th>
+                <th>创建时间</th>
+                <th>操作</th>
+              </tr>
+              </thead>
+              <tbody id="takedetail_list"></tbody>
+            </table>
+
+          </div>
+          <!-- end widget content -->
+
+        </div>
+        <!-- end widget div -->
+
+      </div>
+      <!-- end widget -->
+
+    </article>
+    <!-- WIDGET END -->
+
+  </div>
+  <!-- end row -->
+  <div class="row">
+
+    <div class="col-lg-10" id="pagination_area">
+
+    </div>
+
+    <div class="col-lg-2">
+        <span>
+            <button class="btn btn-primary btn-sm pull-right" data-toggle="modal" data-target="#supplierAddModal"
+                    onclick="addView()">
+              追加
+            </button>
+        </span>
+    </div>
+  </div>
+
+</section>
+<!-- end widget grid -->
+
+
+<!-- Modal -->
+<div class="modal fade" id="selectModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+          &times;
+        </button>
+        <h4 class="modal-title" id="myModalLabel">追加盘点</h4>
+      </div>
+      <div class="modal-body">
+
+        <div class="row">
+          <div class="col-md-12" id="popup_product_list">
+            <table class="table table-bordered table-striped table-hover">
+              <thead>
+              <tr>
+                <th>序号</th>
+                <th>编号</th>
+                <th>名称</th>
+                <th>类别</th>
+                <th>库房</th>
+                <th>单位</th>
+                <th>价格</th>
+                <th>操作</th>
+              </tr>
+              </thead>
+              <tbody id="product_list"></tbody>
+            </table>
+
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12" id="popup_pagination_area">
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+
+        <button type="button" class="btn btn-default" data-dismiss="modal">
+          取消
+        </button>
+        <button type="button" class="btn btn-primary">
+          添加
+        </button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<script type="text/template" id="tmpl_category_list">
+
+  <p style="float: left; margin-right: 20px;"><input type="checkbox" value="{{value}}" index="{{index}}" class="categoryBox" onclick="onCheckedTouched(this)">{{value}}</p>
+</script>
+
+<script type="text/template" id="tmpl_takedetail_list">
+  <tr>
+    <td>{{index}}</td>
+    <td>{{sn}}</td>
+    <td>{{name}}</td>
+    <td>{{unit}}</td>
+    <td>{{category}}</td>
+    <td>{{original}}</td>
+    <td>{{amount}}</td>
+    <td>{{adjustment}}</td>
+    <td>
+      <$ for (var i in tips) { $>
+      【{{(Number(i)+1)}}】{{tips[i]}}</br>
+      <$ } $>
+    </td>
+    <td>{{createat}}</td>
+    <td>
+      <a class="btn btn-primary btn-sm" href="javascript:void(0);" onclick="adjustPopup('{{id}}')">修改</a>
+      <a class="btn btn-primary btn-sm" href="javascript:void(0);" onclick="addTips('{{id}}')">备注</a></td>
+  </tr>
+
+</script>
+
+<script type="text/template" id="tmpl_product_list">
+  <tr>
+    <td>{{index}}</td>
+    <td>{{productSN}}</td>
+    <td>{{productName}}</td>
+    <td>{{category}}</td>
+    <td>{{room}}</td>
+    <td>{{unit}}</td>
+    <td>{{productPrice}}</td>
+    <td><a class="btn btn-primary btn-xs" href="javascript:void(0);" onclick="selectBtn('{{id}}')">选择</a></td>
+  </tr>
+</script>
+
+<script type="text/javascript" src="/javascripts/take_detail.js"></script>
+
+<script type="text/javascript">
+  // DO NOT REMOVE : GLOBAL FUNCTIONS!
+  pageSetUp();
+  // PAGE RELATED SCRIPTS
+  var start = 0;
+  var count = 10;
+
+  function initialize() {
+
+    tmpCategoryList = [];
+    smart.paginationInitalized = false;
+    $("#pagination_area").html("");
+    render(start, count);
+    renderCategory();
+    event();
+  }
+</script>

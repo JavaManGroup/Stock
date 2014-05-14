@@ -17,7 +17,7 @@ var mongo       = smart.util.mongoose
 var Room = new schema({
     roomNum     :   { type: String, description: "编号"}
   , roomName    :   { type: String, description: "名称"}
-  , valid       :   { type: Number, description: "产品名称" , default:1}
+  , valid       :   { type: Number, description: "有效" , default:1}
   , createat    :   { type: Date,   description: "创建时间" }
   , createby    :   { type: String, description: "创建者" }
   , editat      :   { type: Date,   description: "最终修改时间" }

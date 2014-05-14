@@ -54,47 +54,19 @@
 
                     <!-- widget content -->
                     <div class="widget-body no-padding">
-                        <table class="table table-bordered table-striped table-hover">
+                        <table class="table table-bordered table-striped table-hover datastore">
                             <thead>
                             <tr>
-                                <th>编号</th>
-                                <th>名称</th>
-                                <th>创建者</th>
-                                <th>创建时间</th>
-                                <th>更新时间</th>
+                                <th options="{column:'index',type:'sequence'}">序号</th>
+                                <th options="{column:'roomNum',type:'text'}">编号</th>
+                                <th options="{column:'roomName',type:'text'}">名称</th>
+                                <th options="{column:'userName',type:'text',ref:'user'}">创建者</th>
+                                <th options="{column:'createAt',type:'date',format:'YYYY-MM-DD'}">创建时间</th>
+                                <th options="{column:'updateAt',type:'date',format:'YYYY-MM-DD'}">更新时间</th>
                                 <th>操作</th>
                             </tr>
                             </thead>
-                            <tbody id="room_list">
-                            <tr>
-                                <td>LB01</td>
-                                <td>水吧</td>
-                                <td>1</td>
-                                <td>2014-03-22</td>
-                                <td>2014-03-22</td>
-                                <td><a class="btn btn-primary btn-sm" href="javascript:void(0);">修改</a>
-                                    <a class="btn btn-danger btn-sm" href="javascript:void(0);">删除</a></td>
-                            </tr>
-                            <tr>
-                                <td>LB02</td>
-                                <td>仓库</td>
-                                <td>1</td>
-                                <td>2014-03-22</td>
-                                <td>2014-03-22</td>
-                                <td><a class="btn btn-primary btn-sm" href="javascript:void(0);">修改</a>
-                                    <a class="btn btn-danger btn-sm" href="javascript:void(0);">删除</a></td>
-                            </tr>
-                            <tr>
-                                <td>LB03</td>
-                                <td>后厨</td>
-                                <td>1</td>
-                                <td>2014-03-22</td>
-                                <td>2014-03-22</td>
-                                <td><a class="btn btn-primary btn-sm" href="javascript:void(0);">修改</a>
-                                    <a class="btn btn-danger btn-sm" href="javascript:void(0);">删除</a></td>
-                            </tr>
-
-                            </tbody>
+                            <tbody id="room_list"></tbody>
                         </table>
 
                     </div>
@@ -124,7 +96,7 @@
                 追加
             </button>
         </span>
-        </div>
+      </div>
     </div>
 
 </section>
@@ -146,6 +118,8 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
+
+                            <input type="hidden" id="roomId"/>
                             <input type="text" class="form-control" placeholder="编号" required id="roomNum"/>
                         </div>
 

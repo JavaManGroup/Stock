@@ -17,6 +17,7 @@
   <div class="row">
 
     <input type="hidden" id="_csrf" name="_csrf" value="<%= csrftoken %>" />
+    <input type="hidden" id="productId" name="productId" value="<%= productId %>" />
     <!-- NEW COL START -->
     <article class="col-sm-6 col-md-12 col-lg-12">
 
@@ -63,15 +64,38 @@
                       <label class="input">
                         <input type="text" class="input-xs" id="productSN">
                       </label>
+
+                      <label class="label">库房列表：</label>
+                      <label class="select">
+                        <select name="country" class="input-sm" id="room_list">
+                          <option value="0" selected="" disabled="">Country</option>
+                          <option value="244">Aaland Islands</option>
+                          <option value="1">Afghanistan</option>
+                          <option value="2">Albania</option>
+                        </select>
+                      </label>
+
                     </div>
                     <div class="col col-4">
                       <label class="label">产品分类：</label>
-                      <label class="input">
-                        <input type="text" class="input-xs" id="productCategoryId">
+                      <label class="select">
+                        <select name="country" class="input-sm" id="category_list">
+                          <option value="0" selected="" disabled="">Country</option>
+                          <option value="244">Aaland Islands</option>
+                          <option value="1">Afghanistan</option>
+                          <option value="2">Albania</option>
+                        </select>
                       </label>
                       <label class="label">产品单位：</label>
-                      <label class="input">
-                        <input type="text" class="input-xs" id="productUnitId">
+                      <label class="select">
+                        <select name="country" class="input-sm" id="unit_list">
+                        </select>
+                      </label>
+
+                      <label class="label">供应商列表：</label>
+                      <label class="select">
+                        <select name="country" class="input-sm" id="supplier_list">
+                        </select>
                       </label>
 
                     </div>
@@ -106,41 +130,12 @@
                 </section>
               </fieldset>
 
-
-              <fieldset>
-                <div class="row">
-                  <section class="col col-5">
-                    <label class="label">盘点类型：</label>
-                    <label class="toggle">
-                      <input type="radio" name="radio-toggle" checked="checked">
-                      <i data-swchon-text="ON" data-swchoff-text="OFF"></i>日盘</label>
-                    <label class="toggle">
-                      <input type="radio" name="radio-toggle">
-                      <i data-swchon-text="ON" data-swchoff-text="OFF"></i>月盘</label>
-                    <label class="toggle">
-                      <input type="radio" name="radio-toggle">
-                      <i data-swchon-text="ON" data-swchoff-text="OFF"></i>季盘</label>
-                  </section>
-
-                  <div class="col col-2"></div>
-
-                  <section class="col col-5"></section>
-                </div>
-              </fieldset>
-
-              <fieldset>
-
-
-
-
-              </fieldset>
-
               <footer>
-                <button type="submit" class="btn btn-primary">
+                <button type="submit" class="btn btn-primary" onclick="addAndNext();" id="addAndNextBtn">
                   提交&录入下一个
                 </button>
 
-                <button type="submit" class="btn btn-primary" id="btnProductAdd">
+                <button type="submit" class="btn btn-primary" onclick="addAndBack();" id="addBtn">
                   提交&返回
                 </button>
 
@@ -167,6 +162,11 @@
 </section>
 <!-- end widget grid -->
 
+<script type="text/template" id="tmpl_option">
+  <option value="{{value}}">{{name}}</option>
+</script>
+
+<script type="text/javascript" src="/javascripts/product_add.js"></script>
 <!-- SCRIPTS ON PAGE EVENT -->
 <script type="text/javascript">
   // DO NOT REMOVE : GLOBAL FUNCTIONS!
@@ -174,7 +174,8 @@
 
   function initialize() {
     console.log("product_add");
-    event();
+
+    addview();
   }
   function event() {
 
@@ -184,20 +185,26 @@
 
       var productName = $("#productName").val();
       var productSN = $("#productSN").val();
-      var productCategoryId = $("#productCategoryId").val();
-      var productUnitId = $("#productUnitId").val();
+      var productCategoryId = $("#category_list").val();
+      var productUnitId = $("#unit_list").val();
+      var productSupplierId = $("#supplier_list").val();
+      var productRoomId = $("#room_list").val();
       var productCode = $("#productCode").val();
       var productPrice = $("#productPrice").val();
       var productDescription = $("#productDescription").val();
 
       var opt = {
-        productName : productName ,
-        productSN : productSN ,
-        productCategoryId : productCategoryId,
-        productUnitId : productUnitId,
-        productCode : productCode,
-        productPrice : productPrice,
-        productDescription : productDescription
+        productName         : productName ,
+        productSN           : productSN ,
+
+        productCategoryId   : productCategoryId ,
+        productSupplierId   : productSupplierId ,
+        productRoomId       : productRoomId ,
+        productUnitId       : productUnitId,
+
+        productCode         : productCode,
+        productPrice        : productPrice,
+        productDescription  : productDescription
       };
 
       smart.dopost("/api/product/add.json",opt,function(err,result){

@@ -10,21 +10,12 @@
     </div>
 </div>
 
-<div class="row">
-    <div class="col-xs-12 col-sm-7 col-md-7 col-lg-4 page-title">
-        <span>
-            <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal">
-                追加
-            </button>
-        </span>
-    </div>
-</div>
-
 <!-- widget grid -->
 <section id="widget-grid" class="">
 
     <!-- row -->
     <div class="row">
+        <input type="hidden" id="_csrf" name="_csrf" value="<%= csrftoken %>" />
 
         <!-- NEW WIDGET START -->
         <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -73,31 +64,7 @@
                                 <th>操作</th>
                             </tr>
                             </thead>
-                            <tbody>
-                            <tr>
-                                <td>LB01</td>
-                                <td>二粮库</td>
-                                <td>13333333333</td>
-                                <td>粮油</td>
-                                <td>浩</td>
-                                <td>2014-03-22</td>
-                                <td>2014-03-22</td>
-                                <td><a class="btn btn-primary btn-sm" href="javascript:void(0);">修改</a>
-                                    <a class="btn btn-danger btn-sm" href="javascript:void(0);">删除</a></td>
-                            </tr>
-                            <tr>
-                                <td>LB02</td>
-                                <td>二粮库</td>
-                                <td>13333333333</td>
-                                <td>粮油</td>
-                                <td>浩</td>
-                                <td>2014-03-22</td>
-                                <td>2014-03-22</td>
-                                <td><a class="btn btn-primary btn-sm" href="javascript:void(0);">修改</a>
-                                    <a class="btn btn-danger btn-sm" href="javascript:void(0);">删除</a></td>
-                            </tr>
-
-                            </tbody>
+                            <tbody id="supplier_list"></tbody>
                         </table>
 
                     </div>
@@ -113,14 +80,29 @@
         <!-- WIDGET END -->
 
     </div>
-    <!-- end row -->
+  <!-- end row -->
+  <div class="row">
+
+    <div class="col-lg-10" id="pagination_area">
+
+    </div>
+
+    <div class="col-lg-2">
+        <span>
+            <button class="btn btn-primary btn-sm pull-right" data-toggle="modal" data-target="#supplierAddModal"
+                    onclick="addView()">
+              追加
+            </button>
+        </span>
+    </div>
+  </div>
 
 </section>
 <!-- end widget grid -->
 
 
 <!-- Modal -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal fade" id="supplierAddModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -133,21 +115,20 @@
 
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="form-group">
-                            <input type="text" class="form-control" placeholder="编号" required />
-                        </div>
 
-                        <div class="form-group">
-                            <input type="text" class="form-control" placeholder="名称" required />
-                        </div>
+                      <input type="hidden" id="supplierId"/>
 
-                        <div class="form-group">
-                            <input type="text" class="form-control" placeholder="联系方式" required />
-                        </div>
+                      <div class="form-group">
+                        <input type="text" class="form-control" placeholder="编号" required id="supplierNum"/>
+                      </div>
 
-                        <div class="form-group">
-                            <input type="text" class="form-control" placeholder="主营" required />
-                        </div>
+                      <div class="form-group">
+                        <input type="text" class="form-control" placeholder="名称" required id="supplierName"/>
+                      </div>
+
+                      <div class="form-group">
+                        <input type="text" class="form-control" placeholder="电话" required id="supplierPhone"/>
+                      </div>
                     </div>
                 </div>
             </div>
@@ -155,7 +136,7 @@
                 <button type="button" class="btn btn-default" data-dismiss="modal">
                     取消
                 </button>
-                <button type="button" class="btn btn-primary">
+                <button type="button" class="btn btn-primary" onclick="add()" ID="addBtn">
                     添加
                 </button>
             </div>
@@ -163,12 +144,39 @@
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
+<script type="text/template" id="tmpl_supplier_list">
+
+  <tr>
+    <td>{{index}}</td>
+    <td>{{supplierNum}}</td>
+    <td>{{supplierName}}</td>
+    <td>{{supplierPhone}}</td>
+    <td>{{userName}}</td>
+    <td>{{createat}}</td>
+    <td>{{editat}}</td>
+    <td><a class="btn btn-primary btn-sm" href="javascript:void(0);" onclick="updateBtn('{{supplierId}}')">修改</a>
+        <a class="btn btn-danger btn-sm" href="javascript:void(0);" onclick="deleteBtn('{{supplierId}}')">删除</a></td>
+  </tr>
+
+</script>
+
+<script type="text/javascript" src="/javascripts/supplier_list.js"></script>
 
 <script type="text/javascript">
     // DO NOT REMOVE : GLOBAL FUNCTIONS!
     pageSetUp();
     // PAGE RELATED SCRIPTS
+
+    var start = 0;
+    var count = 10;
+    var keyword = "";
+
+
     function initialize() {
 
+      smart.paginationInitalized = false;
+      $("#pagination_area").html("");
+      render(start,count,keyword);
+      event();
     }
 </script>

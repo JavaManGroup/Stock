@@ -11,5 +11,9 @@ exports.guiding = function (app) {
   apis.guiding(app);
 
   website.guiding(app);
+
+  smart.ctrl.dispatcher.dispatch(app);
+
+
 };
 

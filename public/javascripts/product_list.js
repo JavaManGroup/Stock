@@ -1,15 +1,31 @@
 
 
+function modifyView(id) {
+
+  var url = "ajax/product/add?id=" + id;
+  var container = $('#content');
+
+  window.location.hash = url;
+
+  loadURL(url, container);
+}
+
+function addView(){
+
+  var url = "ajax/product/add";
+  var container = $('#content');
+
+  window.location.hash = url;
+
+  loadURL(url, container);
+}
+
 function render(start, count,keyword) {
 
   var jsonUrl = "/api/product/list.json?";
   jsonUrl += "start=" + start;
   jsonUrl += "&count=" + count;
 
-  if(keyword){
-    keyword = keyword ? encodeURIComponent(keyword) : "";
-    jsonUrl += "&keyword=" + keyword;
-  }
   smart.doget(jsonUrl, function(e, result){
 
     if (smart.error(e, "", true)) {
@@ -25,11 +41,17 @@ function render(start, count,keyword) {
     _.each(list, function(row){
 
       container.append(_.template(tmpl, {
+        index : index++ ,
+        productId : row._id,
         productSN :row.productSN ,
         productName: row.productName ,
-        createat : row.createat ,
-        editat : row.editat ,
-        createby : row.createby
+        category : row.category.name ,
+        unit : row.unit.unitName ,
+        room : row.room.roomName ,
+        supplier : row.supplier.supplierName ,
+        createat : smart.date(row.createat) ,
+        editat :  smart.date(row.editat),
+        createby : row.user.first
       }));
     });
 
@@ -38,9 +60,9 @@ function render(start, count,keyword) {
     }
 
     // 设定翻页
-//    smart.pagination($("#pagination_area"), result.totalItems, count, function(active, rowCount){
-//      render.apply(window, [active, count]);
-//    });
+    smart.pagination($("#pagination_area"), result.totalItems, count, function(active, rowCount){
+      render(active,count);
+    });
   });
 
 }

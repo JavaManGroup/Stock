@@ -15,8 +15,6 @@ exports.update = function (handler, callback) {
   var data = {
     roomNum   : params.roomNum   ,
     roomName  : params.roomName  ,
-    roomRadix : params.roomRadix ,
-    roomScale : params.roomScale ,
     editat : new Date()
   };
 
@@ -61,8 +59,6 @@ exports.add = function (handler, callback) {
   var data = {
     roomNum   : params.roomNum   ,
     roomName  : params.roomName  ,
-    roomRadix : params.roomRadix ,
-    roomScale : params.roomScale ,
     createat : new Date() ,
     editat : new Date()
   };
