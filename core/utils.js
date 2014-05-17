@@ -15,9 +15,6 @@ var _         = smart.util.underscore
 
 exports.authenticate = function(req, res, next) {
 
-  console.log("$$$$$$$$$$$$$$$$$$");
-  console.log(req.url.indexOf("ajax"));
-
   try {
     middleware.authenticate(req, res, next);
   } catch (e) {

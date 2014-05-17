@@ -8,6 +8,7 @@ var _ = smart.util.underscore
 
 
 exports.update = function (handler, callback) {
+
   var uid = handler.uid
     , code = handler.code
     , supplierId = handler.params.supplierId;
@@ -18,13 +19,13 @@ exports.update = function (handler, callback) {
     editat : new Date()
   };
 
-  supplier.update(code,supplierId,data,function(err,result){
-    return callback(err,result);
+  supplier.update(code, supplierId, data, function (err, result) {
+    return callback(err, result);
   });
-
 }
 
 exports.remove = function (handler, callback) {
+
   var uid = handler.uid
     , code = handler.code
     , supplierId = handler.params.supplierId;

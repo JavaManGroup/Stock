@@ -6,23 +6,23 @@
 
 "use strict";
 
-var ctrlUser    = smart.ctrl.user
-  , ctrlAclink  = smart.ctrl.aclink
-  , auth        = smart.framework.auth
-  , constant    = smart.framework.constant
-  , context     = smart.framework.context
-  , log         = smart.framework.log
-  , response    = smart.framework.response
-  , _           = smart.util.underscore;
+var ctrlUser = smart.ctrl.user
+  , ctrlAclink = smart.ctrl.aclink
+  , auth = smart.framework.auth
+  , constant = smart.framework.constant
+  , context = smart.framework.context
+  , log = smart.framework.log
+  , response = smart.framework.response
+  , _ = smart.util.underscore;
 
 var permission = require("../controllers/ctrl_ac.js");
 
 var FAKE_PASSWORD = "0000000000000000";
 
 function hasPermission(permissions, pcode) {
-  if(permissions) {
-    for(var i = 0; i < permissions.length; i++) {
-      if(permissions[i] === pcode) {
+  if (permissions) {
+    for (var i = 0; i < permissions.length; i++) {
+      if (permissions[i] === pcode) {
         return true;
       }
     }
@@ -40,7 +40,7 @@ exports.PERMISSION_CASH = "2";
  * @param {Object} res 响应对象
  * @returns {*} 无
  */
-exports.simpleLogin = function(req, res){
+exports.simpleLogin = function (req, res) {
 
   log.debug("user name: " + req.query.name);
 
@@ -50,7 +50,7 @@ exports.simpleLogin = function(req, res){
   var handler = new context().bind(req, res);
 
   // 認証処理
-  auth.simpleLogin(req, res, function(err, result) {
+  auth.simpleLogin(req, res, function (err, result) {
 
     if (err) {
       log.error(err, undefined);
@@ -59,8 +59,8 @@ exports.simpleLogin = function(req, res){
     } else {
       log.audit("login succeed.", result._id);
     }
-    permission.checkCash(handler,function(err,exist){
-      if(exist)
+    permission.checkCash(handler, function (err, exist) {
+      if (exist)
         result._doc.cash = exist;
       response.send(res, err, result);
     });
@@ -74,7 +74,7 @@ exports.simpleLogin = function(req, res){
  * @param {Object} res 响应对象
  * @returns {*} 无
  */
-exports.simpleLogout = function(req, res){
+exports.simpleLogout = function (req, res) {
 
   auth.logout(req);
   // TODO
@@ -87,7 +87,7 @@ exports.simpleLogout = function(req, res){
  * @param res 响应对象
  * @returns {*} 无
  */
-exports.add = function(req, res) {
+exports.add = function (req, res) {
 
   var handler = new context().bind(req, res);
 
@@ -100,33 +100,33 @@ exports.add = function(req, res) {
   handler.addParams("lang", "zh");
   handler.addParams("timezone", "GMT+08:00");
   handler.addParams("extend", {
-    birthday  : params.birthday   // 出生日期
-    , sex       : params.sex        // 性别
-    , entryDate : params.entryDate  // 入职时间
-    , cellphone : params.cellphone  // 手机号码
-    , remark    : params.remark    // 备注
+    birthday: params.birthday   // 出生日期
+    , sex: params.sex        // 性别
+    , entryDate: params.entryDate  // 入职时间
+    , cellphone: params.cellphone  // 手机号码
+    , remark: params.remark    // 备注
   });
 
-  ctrlUser.add(handler, function(err, result) {
+  ctrlUser.add(handler, function (err, result) {
 
     if (err) {
       return response.send(res, err);
     }
 
-    if(params.admin || params.cash) {
+    if (params.admin || params.cash) {
       // 设置权限
       handler.addParams("type", constant.ACLINK_TYPE_USER_PERMISSION);
       handler.addParams("main", result._id.toString());
       var subs = [];
-      if(params.admin) {
+      if (params.admin) {
         subs.push(exports.PERMISSION_ADMIN);
       }
-      if(params.cash) {
+      if (params.cash) {
         subs.push(exports.PERMISSION_CASH);
       }
       handler.addParams("subs", subs);
 
-      ctrlAclink.add(handler, function(err, result) {
+      ctrlAclink.add(handler, function (err, result) {
         return response.send(res, err, {isSuccess: result ? true : false});
       });
     } else {
@@ -142,12 +142,12 @@ exports.add = function(req, res) {
  * @param res 响应对象
  * @returns {*} 无
  */
-exports.remove = function(req, res) {
+exports.remove = function (req, res) {
 
   var handler = new context().bind(req, res);
   handler.addParams("uid", handler.params.userId);
 
-  ctrlUser.remove(handler, function(err, result) {
+  ctrlUser.remove(handler, function (err, result) {
 
     return response.send(res, err, {isSuccess: result ? true : false});
   });
@@ -160,7 +160,7 @@ exports.remove = function(req, res) {
  * @param res 响应对象
  * @returns {*} 无
  */
-exports.update = function(req, res) {
+exports.update = function (req, res) {
 
   var handler = new context().bind(req, res);
 
@@ -174,14 +174,14 @@ exports.update = function(req, res) {
   }
   handler.addParams("first", params.name);
   handler.addParams("extend", {
-    birthday  : params.birthday   // 出生日期
-    , sex       : params.sex        // 性别
-    , entryDate : params.entryDate  // 入职时间
-    , cellphone : params.cellphone  // 手机号码
-    , remark    : params.remark    // 备注
+    birthday: params.birthday   // 出生日期
+    , sex: params.sex        // 性别
+    , entryDate: params.entryDate  // 入职时间
+    , cellphone: params.cellphone  // 手机号码
+    , remark: params.remark    // 备注
   });
 
-  ctrlUser.update(handler, function(err, result) {
+  ctrlUser.update(handler, function (err, result) {
 
     if (err) {
       return response.send(res, err);
@@ -191,15 +191,15 @@ exports.update = function(req, res) {
     handler.addParams("type", constant.ACLINK_TYPE_USER_PERMISSION);
     handler.addParams("main", result._id.toString());
     var subs = [];
-    if(params.admin === true) {
+    if (params.admin === true) {
       subs.push(exports.PERMISSION_ADMIN);
     }
-    if(params.cash === true) {
+    if (params.cash === true) {
       subs.push(exports.PERMISSION_CASH);
     }
     handler.addParams("subs", subs);
 
-    ctrlAclink.update(handler, function(err, result) {
+    ctrlAclink.update(handler, function (err, result) {
       return response.send(res, err, {isSuccess: result ? true : false});
     });
   });
@@ -212,44 +212,36 @@ exports.update = function(req, res) {
  * @param res 响应对象
  * @returns {*} 无
  */
-exports.get = function(req, res) {
+exports.get = function (req, res) {
 
   var handler = new context().bind(req, res);
   handler.addParams("uid", handler.params.userId);
 
-  ctrlUser.get(handler, function(err, result) {
+  ctrlUser.get(handler, function (err, result) {
 
     if (err) {
       return response.send(res, err);
     }
 
     var userData;
-    if(result) {
+    if (result) {
 
       result.extend = result.extend ? result.extend : {};
 
       userData = {
-        _id       : result._id
-        , id        : result.userName
-        , password  : FAKE_PASSWORD
-        , name      : result.first
-        , birthday  : result.extend.birthday
-        , sex       : result.extend.sex
-        , entryDate : result.extend.entryDate
-        , cellphone : result.extend.cellphone
-        , remark    : result.extend.remark
+        _id: result._id, id: result.userName, password: FAKE_PASSWORD, name: result.first, birthday: result.extend.birthday, sex: result.extend.sex, entryDate: result.extend.entryDate, cellphone: result.extend.cellphone, remark: result.extend.remark
       };
 
       // 获取权限
       handler.addParams("type", constant.ACLINK_TYPE_USER_PERMISSION);
       handler.addParams("main", result._id.toString());
-      ctrlAclink.get(handler, function(err, result) {
+      ctrlAclink.get(handler, function (err, result) {
 
         if (err) {
           return response.send(res, err);
         }
 
-        if(result) {
+        if (result) {
           userData.admin = hasPermission(result.subs, exports.PERMISSION_ADMIN);
           userData.cash = hasPermission(result.subs, exports.PERMISSION_CASH);
         }
@@ -269,23 +261,26 @@ exports.get = function(req, res) {
  * @param res 响应对象
  * @returns {*} 无
  */
-exports.getList = function(req, res) {
+exports.getList = function (req, res) {
 
   var handler = new context().bind(req, res);
 
   var keyword = handler.params.keyword;
 
   var condition = {
-    "$or": [{
-      "userName": new RegExp(keyword, "i")
-    }, {
-      "first": new RegExp(keyword, "i")
-    }]
+    "$or": [
+      {
+        "userName": new RegExp(keyword, "i")
+      },
+      {
+        "first": new RegExp(keyword, "i")
+      }
+    ]
   };
 
   handler.addParams("condition", condition);
 
-  ctrlUser.getList(handler, function(err, userResult) {
+  ctrlUser.getList(handler, function (err, userResult) {
 
     if (err) {
       return response.send(res, err);
@@ -293,39 +288,31 @@ exports.getList = function(req, res) {
 
     var users = [];
     var uids = [];
-    _.each(userResult.items, function(user) {
+    _.each(userResult.items, function (user) {
 
       user.extend = user.extend ? user.extend : {};
 
       users.push({
-        _id        : user._id
-        , id         : user.userName
-        , name       : user.first
-        , birthday   : user.extend.birthday
-        , sex        : user.extend.sex
-        , entryDate  : user.extend.entryDate
-        , cellphone  : user.extend.cellphone
-        , remark     : user.extend.remark
+        _id: user._id, id: user.userName, name: user.first, birthday: user.extend.birthday, sex: user.extend.sex, entryDate: user.extend.entryDate, cellphone: user.extend.cellphone, remark: user.extend.remark
       });
 
       uids.push(user._id.toString());
     });
 
-    if(uids.length > 0) {
+    if (uids.length > 0) {
       // 关联权限
       handler.addParams("condition", {
-        type: constant.ACLINK_TYPE_USER_PERMISSION
-        , main: {$in: uids}
+        type: constant.ACLINK_TYPE_USER_PERMISSION, main: {$in: uids}
       });
 
-      ctrlAclink.getList(handler, function(err, result) {
+      ctrlAclink.getList(handler, function (err, result) {
         if (err) {
           return response.send(res, err);
         }
 
-        _.each(users, function(user) {
-          for(var i = 0; i < result.length; i++) {
-            if(result[i].main === user._id.toString()) {
+        _.each(users, function (user) {
+          for (var i = 0; i < result.length; i++) {
+            if (result[i].main === user._id.toString()) {
               user.admin = hasPermission(result[i].subs, exports.PERMISSION_ADMIN);
               user.cash = hasPermission(result[i].subs, exports.PERMISSION_CASH);
             }
@@ -348,7 +335,7 @@ exports.getList = function(req, res) {
  * @param res 响应对象
  * @returns {*} 无
  */
-exports.updatePassword = function(req, res) {
+exports.updatePassword = function (req, res) {
 
   var handler = new context().bind(req, res);
 
@@ -359,7 +346,7 @@ exports.updatePassword = function(req, res) {
   handler.addParams("name", name);
   handler.addParams("password", auth.sha256(oldPassword));
 
-  ctrlUser.isPasswordRight(handler, function(err, result) {
+  ctrlUser.isPasswordRight(handler, function (err, result) {
 
     if (err) {
       return response.send(res, err);
@@ -367,7 +354,7 @@ exports.updatePassword = function(req, res) {
 
     handler.addParams("password", auth.sha256(newPassword));
 
-    ctrlUser.update(handler, function(err, result) {
+    ctrlUser.update(handler, function (err, result) {
       return response.send(res, err, {isSuccess: result ? true : false});
     });
 
@@ -380,14 +367,14 @@ exports.updatePassword = function(req, res) {
  * @param res 响应对象
  * @returns {*} 无
  */
-exports.updatePattern = function(req, res) {
+exports.updatePattern = function (req, res) {
 
   var handler = new context().bind(req, res);
 
   handler.addParams("extendKey", "pattern");
   handler.addParams("extendValue", handler.params.pattern);
 
-  ctrlUser.updateExtendProperty(handler, function(err, result) {
+  ctrlUser.updateExtendProperty(handler, function (err, result) {
     return response.send(res, err, {isSuccess: result ? true : false});
   });
 };
@@ -398,11 +385,11 @@ exports.updatePattern = function(req, res) {
  * @param res 响应对象
  * @returns {*} 无
  */
-exports.isPatternRight = function(req, res) {
+exports.isPatternRight = function (req, res) {
 
   var handler = new context().bind(req, res);
   log.operation("begin: check pattern  .", handler.uid);
-  ctrlUser.get(handler, function(err, result) {
+  ctrlUser.get(handler, function (err, result) {
 
     if (err) {
       log.operation("end: check pattern with error .", err);
@@ -415,13 +402,6 @@ exports.isPatternRight = function(req, res) {
       return response.send(res, err, {isRight: -1});
     }
     log.operation("end: check pattern", handler.uid);
-
-
-//    setTimeout(function() {
-//      return response.send(res, err, {isRight: (result.extend.pattern === handler.params.pattern)});
-//    }, 5000);
-
-
 
     return response.send(res, err, {isRight: (result.extend.pattern === handler.params.pattern)});
   });

@@ -172,7 +172,8 @@ var pupopData = function(start, count) {
         createat : smart.date(row.createat) ,
         editat :  smart.date(row.editat),
         createby : row.user.first ,
-        originalAmount : row.originalAmount
+        originalAmount : row.originalAmount ,
+        stockDiff : row.lower - row.originalAmount > 0 ? row.lower - row.originalAmount : '-'
       }));
     });
 

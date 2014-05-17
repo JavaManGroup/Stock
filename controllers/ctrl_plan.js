@@ -11,12 +11,13 @@ var _ = smart.util.underscore
   , product = require('../controllers/ctrl_product');
 
 
+exports.removePlanDetail = function (handler, callback) {
 
-exports.removePlanDetail = function(handler, callback) {
   var code = handler.code;
   var params = handler.params;
 
   var plandetailId = params.plandetailId;
+
   plandetail.remove(code, handler.uid, plandetailId, function (err, result) {
 
     if (err) {
@@ -26,7 +27,8 @@ exports.removePlanDetail = function(handler, callback) {
   });
 };
 
-exports.updatePlanDetail = function(handler, callback) {
+exports.updatePlanDetail = function (handler, callback) {
+
   var code = handler.code;
   var params = handler.params;
 
@@ -36,21 +38,21 @@ exports.updatePlanDetail = function(handler, callback) {
 
   if (planAmount) {
     data = {
-      planAmount : planAmount
+      planAmount: planAmount
     }
   }
 
-  plandetail.update(code,plandetailId,data,function(err,result){
+  plandetail.update(code, plandetailId, data, function (err, result) {
 
     if (err) {
       return callback(new error.InternalServer(err));
     }
-    return callback(err,result);
+    return callback(err, result);
   });
-
 };
 
 exports.getPlanHistory = function(handler, callback) {
+
   var code = handler.code;
   var params = handler.params;
 
@@ -63,9 +65,8 @@ exports.getPlanHistory = function(handler, callback) {
       result._doc.totalDetail = totalItems;
       callback(err, result);
     });
-
-  })
-}
+  });
+};
 
 exports.updatePlanHistory = function(handler, callback) {
 
@@ -82,6 +83,7 @@ exports.updatePlanHistory = function(handler, callback) {
   var data = {};
 
   if (supplierId) {
+
     data = {
       $push: {"planCost": {
         supplierName:supplierName,
@@ -94,9 +96,8 @@ exports.updatePlanHistory = function(handler, callback) {
   if (status) {
     data = {
       status : status
-    }
+    };
   }
-
 
   planhistory.update(code,historyId,data,function(err,result){
 
@@ -108,6 +109,7 @@ exports.updatePlanHistory = function(handler, callback) {
 };
 
 exports.addPlanDetail = function (handler, callback) {
+
   var code = handler.code;
   var params = handler.params;
 
@@ -164,8 +166,6 @@ exports.getPlanDetailList = function (handler, callback) {
 
     plandetail.total(code, condition, function (err, totalItems) {
 
-      var tmpList = [];
-
       return callback(err, {items: result, totalItems: totalItems});
     });
   });
@@ -174,7 +174,6 @@ exports.getPlanDetailList = function (handler, callback) {
 
 exports.getPlanHistoryList = function (handler, callback) {
 
-
   var code = handler.code;
   var condition = {
     valid: 1
@@ -182,7 +181,6 @@ exports.getPlanHistoryList = function (handler, callback) {
   var params = handler.params;
   var start = params.start;
   var count = params.count;
-
 
   planhistory.getList(code, condition, start, count, function (err, result) {
 
@@ -243,8 +241,10 @@ exports.addPlanHistory = function (handler, callback) {
       if (err) {
         return callback(new error.InternalServer(err));
       }
-      //TODO :自动添加detail
+
       handler.addParams("type",1);
+      handler.addParams("all","all");
+
       ctrlStock.getTakeList(handler,function(err, resultTakeList){
          var list = resultTakeList.items;
         async.each(list, function (itStock, cb) {
@@ -299,10 +299,10 @@ exports.getPlanTodayList = function (handler, callback) {
   var condition = {
     valid: 1
   };
+
   var params = handler.params;
   var start = params.start;
   var count = params.count;
-
 
   plancatalog.getList(code, condition, start, count, function (err, result) {
 
@@ -443,13 +443,14 @@ exports.addPlanCatalog = function (handler, callback) {
   });
 };
 
-exports.removePlan = function(handler, callback) {
+exports.removePlan = function (handler, callback) {
+
   var code = handler.code;
   var params = handler.params;
   var planId = params.planId;
   var uid = handler.uid;
 
-  plancatalog.remove(code, uid, planId ,function(err, result) {
+  plancatalog.remove(code, uid, planId, function (err, result) {
 
     if (err) {
       return callback(new error.InternalServer(err));
@@ -460,6 +461,5 @@ exports.removePlan = function(handler, callback) {
     }
 
     return callback(err, result);
-
   });
-}
+};

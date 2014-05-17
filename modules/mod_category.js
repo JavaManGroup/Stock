@@ -1,5 +1,5 @@
 /**
- * @file 存取菜品信息的module
+ * @file 存取分类 module
  * @author xiangrui.zeng@gmail.com
  * @copyright Dreamarts Corporation. All Rights Reserved.
  */
@@ -11,7 +11,7 @@ var mongo       = smart.util.mongoose
   , schema      = mongo.Schema;
 
 /**
- * 菜品的schema
+ * 分类的schema
  * @type {schema}
  */
 var Category = new schema({
@@ -24,16 +24,16 @@ var Category = new schema({
 });
 
 /**
- * 使用定义好的Schema,通过Code生成Item的model
+ * 使用定义好的Schema,通过Code生成Category的model
  * @param {string} code
- * @returns {model} item model
+ * @returns {model} Category model
  */
 function model(dbname) {
   return conn.model(dbname, "Category", Category);
 }
 
 /**
- * 添加素材
+ * 添加分类
  * @param {string} code 公司code
  * @param {object} newItem    新的菜品
  * @param {function} callback 返回素材添加结果
@@ -48,11 +48,11 @@ exports.add = function(code, newCategory, callback) {
 };
 
 /**
- * 更新指定素材
+ * 更新指定分类
  * @param {string} code 公司code
- * @param {string} itemId菜品ID
- * @param {object} conditions 更新条件
- * @param {function} callback 返回菜品更新结果
+ * @param {string} categoryId
+ * @param {object} newCategory
+ * @param {function} callback
  */
 exports.update = function(code, categoryId, newCategory, callback) {
 
@@ -64,10 +64,10 @@ exports.update = function(code, categoryId, newCategory, callback) {
 };
 
 /**
- * 获取指定菜品
- * @param {string} code 公司code
- * @param {string} itemId 菜品ID
- * @param {function} callback 返回指定菜品
+ * 获取指定分类
+ * @param {string} code
+ * @param {string} newCategory
+ * @param {function} callback
  */
 exports.get = function(code, categoryId, callback) {
 
@@ -80,10 +80,11 @@ exports.get = function(code, categoryId, callback) {
 
 
 /**
- * 删除素材
- * @param {string} code  公司code
- * @param {string} itemId 菜品ID
- * @param {function} callback 返回删除结果
+ * 删除分类
+ * @param {string} code
+ * @param {string} uid
+ * @param {string} categoryId
+ * @param {function} callback
  */
 exports.remove = function(code, uid, categoryId, callback) {
 
@@ -95,8 +96,8 @@ exports.remove = function(code, uid, categoryId, callback) {
 };
 
 /**
- * 获取素材一览
- * @param {string} code 公司code
+ * 获取分类一览
+ * @param {string} code 分类code
  * @param {object} condition 条件
  * @param {number} start 数据开始位置
  * @param {number} limit 数据件数
@@ -116,10 +117,10 @@ exports.getList = function(code, condition, start, limit, callback) {
 };
 
 /**
- * 获取素材件数
+ * 获取分类件数
  * @param {string} code 公司Code
- * @param {object} condition 条件
- * @param {function} callback 返回件数
+ * @param {object} condition
+ * @param {function} callback
  */
 exports.total = function(code, condition, callback) {
 

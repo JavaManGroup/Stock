@@ -186,7 +186,7 @@ exports.getTakeHistoryList = function(handler, callback) {
         });
 
       }, function (err, results) {
-        console.log(results);
+
         return callback(err, {items: tmpList, totalItems: total});
       });
     });
@@ -397,6 +397,8 @@ exports.getTakeList = function (handler, callback) {
 
   var params = handler.params;
   var type = params.type;
+  var all = params.all;
+
   var today = new Date();
 
   var condition = {
@@ -407,6 +409,10 @@ exports.getTakeList = function (handler, callback) {
   var category = params.category;
 
   var addProductIndex = function (done) {
+
+    if (all && all == "all"){
+      return done(null,[]);
+    }
 
     if (category && category.length > 0) {
       var productCondition = {
@@ -451,7 +457,7 @@ exports.getTakeList = function (handler, callback) {
       hasTodayList = hasStockResult.todayList;
     }
 
-    if (hasTodayList && hasTodayList.length) {
+    if (!all && hasTodayList && hasTodayList.length) {
 
       var ids = [];
 
@@ -541,7 +547,7 @@ exports.getTakeList = function (handler, callback) {
 };
 
 
-function addStock(code, type, productId, callback) {
+function addStock(code,uid, type, productId, callback) {
 
   //判断是否存在
   stock.hasProduct(code, productId, type, function (err, result) {
@@ -556,7 +562,11 @@ function addStock(code, type, productId, callback) {
     var data = {
       productId: productId,
       productNId: productId,
-      type: type
+      type: type ,
+      editat: new Date(),
+      createat : new Date(),
+      createby : uid,
+      editby:uid
     }
 
     stock.add(code, data, function (err, result1) {
@@ -593,6 +603,7 @@ exports.removeStock = function(handler, callback) {
 
 exports.addStock = function (handler, callback) {
 
+  var uid = handler.uid;
   var code = handler.code;
 
   var params = handler.params;
@@ -601,7 +612,7 @@ exports.addStock = function (handler, callback) {
 
   async.each(stockIds, function (id, cb) {
 
-    addStock(code, type, id, function (err, id) {
+    addStock(code,uid, type, id, function (err, id) {
 
       return cb(null, id);
     });

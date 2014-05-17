@@ -1,10 +1,10 @@
-var response  = smart.framework.response
-  , errors    = smart.framework.errors
-  , util      = smart.framework.util
-  , context   = smart.framework.context
-  , log       = smart.framework.log
-  , _         = smart.util.underscore
-  , plan   = require('../controllers/ctrl_plan');
+var response = smart.framework.response
+  , errors = smart.framework.errors
+  , util = smart.framework.util
+  , context = smart.framework.context
+  , log = smart.framework.log
+  , _ = smart.util.underscore
+  , plan = require('../controllers/ctrl_plan');
 
 
 exports.removePlanDetail = function (req, res) {
@@ -43,7 +43,7 @@ exports.updatePlanHistory = function (req, res) {
 
     response.send(res, err, result);
   });
-}
+};
 
 exports.getPlanDetailList = function (req, res) {
 
@@ -86,7 +86,7 @@ exports.addPlanHistory = function (req, res) {
  * @param req
  * @param res
  */
-exports.getPlanTodayList = function(req,res) {
+exports.getPlanTodayList = function (req, res) {
 
   var handler = new context().bind(req, res);
   plan.getPlanTodayList(handler, function (err, result) {

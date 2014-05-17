@@ -234,9 +234,12 @@ exports.list = function (handler, callback) {
 
           takedetail.getOriginalByProductId(code,productDocs._id,function(err,original){
             productList[obj._doc.index_] = productDocs;
-            if(original[0].adjustment) {
+
+            if (original[0] && original[0].adjustment) {
+
               productList[obj._doc.index_]._doc.originalAmount = original[0].adjustment
-            } else {
+            } else if (original[0]) {
+
               productList[obj._doc.index_]._doc.originalAmount = original[0].amount || 0;
             }
 
@@ -245,6 +248,7 @@ exports.list = function (handler, callback) {
               if (stockDocs) {
 
                 if(stockDocs.lower){
+
                   productList[obj._doc.index_]._doc.lower = stockDocs.lower || 0;
                 }
                 cb(null);

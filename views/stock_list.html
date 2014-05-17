@@ -85,8 +85,6 @@
               <th width=80>阀值</th>
               <th>单位</th>
               <th>价格</th>
-              <th>盘点类型</th>
-              <th>创建者</th>
               <th>创建时间</th>
               <th>更新时间</th>
               <th>操作</th>
@@ -161,10 +159,8 @@
   <td><input class="form-control" value="{{lower}}" data="{{id}}" onblur="onBlurStockLower(this,'{{id}}')" onclick="cleanInput(this)"/></td>
   <td>{{unit}}</td>
   <td>{{price}}</td>
-  <td>{{stockType}}</td>
-  <td>{{userName}}</td>
-  <td>2013-01-01</td>
-  <td>2013-01-01</td>
+  <td>{{createat}}</td>
+  <td>{{editat}}</td>
   <td><a class="btn btn-danger btn-sm" href="javascript:void(0);" onclick="removeStock('{{id}}')">删除</a></td>
 </tr>
 </script>

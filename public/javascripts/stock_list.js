@@ -60,7 +60,7 @@ function render(start, count,keyword) {
     console.log(result);
 
     _.each(list, function (row) {
-      console.log(row.product.productName);
+      console.log(row);
 
       container.append(_.template(tmpl, {
         index: index++,
@@ -75,7 +75,9 @@ function render(start, count,keyword) {
         stockType: row.type || 0,
         userName: row.user || 0,
         id: row._id,
-        amount: row.amount || 1
+        amount: row.amount || 1,
+        createat : smart.date(row.createat),
+        editat : smart.date(row.editat)
       }));
     });
 

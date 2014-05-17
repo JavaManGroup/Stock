@@ -109,7 +109,6 @@
                 <th width="80">单位</th>
                 <th width="80">单价</th>
                 <th width="120">计划购入数量</th>
-                <th width="80">创建者</th>
                 <th width="190">创建时间</th>
                 <th width="190">更新时间</th>
                 <th>操作</th>
@@ -155,6 +154,7 @@
     <td>{{unit}}</td>
     <td>{{originalAmount}}</td>
     <td>{{stockLower}}</td>
+    <td>{{stockDiff}}</td>
     <td>{{productPrice}}</td>
     <td><a class="btn btn-primary btn-xs" href="javascript:void(0);" onclick="selectBtn('{{id}}')">选择</a></td>
   </tr>
@@ -185,6 +185,7 @@
                 <th>单位</th>
                 <th>当前数量</th>
                 <th>库存阀值</th>
+                <th>缺值</th>
                 <th>价格</th>
                 <th>操作</th>
               </tr>
@@ -299,10 +300,7 @@
     <td>{{room}}</td>
     <td>{{unit}}</td>
     <td>{{productPrice}}</td>
-
-
     <td>{{planAmount}}</td>
-    <td>浩</td>
     <td>{{createat}}</td>
     <td>{{editat}}</td>
     <td>
